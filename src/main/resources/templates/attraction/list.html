@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+<head>
+    <meta charset="UTF-8">
+    <title>Attraction 글 목록</title>
+</head>
+<body>
+<div class="container">
+    <div layout:fragment="content" class="content">
+        <a th:href="|@{/attraction/write}|" class="btn btn-danger">
+            글쓰기
+        </a>
+        <h2></h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Ano</th>
+                <th scope="col">title</th>
+                <th scope="col">content</th>
+                <th scope="col">writer</th>
+                <th scope="col">regTime</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="att, status: ${atrc}">
+                <td th:value="${att.ano}"></td>
+                <!-- T(thymeleaf 에서 제공하는 객체에 접근하는 방법)-->
+                <!--T(com.shop.constant.ItemSellStatus).SELL-->
+                <td>
+                    <a th:href="|@{/attraction/read(ano=${att.ano})}|">[[${att.title}]]</a>
+                </td>
+                <td th:text="${att.content}"></td>
+                <td th:text="${att.writer}"></td>
+                <td th:text="${#temporals.format(att.regTime, 'yyyy-MM-dd hh:mm')}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

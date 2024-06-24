@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+<head>
+    <meta charset="UTF-8">
+    <title>Attraction 글 수정 하기</title>
+</head>
+<body>
+<div class="container">
+    <div layout:fragment="content" class="content">
+        <h1>수정은 본인만 접근 가능!</h1>
+        <h1 th:text="${errorMsg}"></h1>
+        <form id="form-mul" action="/attraction/modify" method="post" enctype="multipart/form-data">
+        <div>
+            <label for="ano">
+                <input id="ano" name="ano" type="text" th:value="${attractionDTO.ano}" readonly>
+            </label>
+            <label for="title">
+                <input id="title" name="title" type="text" th:value="${attractionDTO.title}">
+            </label>
+            <label for="content">
+                <input id="content" name="content" type="text" th:value="${attractionDTO.content}">
+            </label>
+            <label for="writer">
+                <input id="writer" name="writer" type="text" th:value="${attractionDTO.writer}" readonly>
+            </label>
+            <div>
+                <div class="row">
+                    <div class="col">
+                        <div class="card-body" th:each="attImg: ${attractionDTO.faImgDTOList}">
+                            <img width="500px" th:if="${not #strings.isEmpty(attImg.imgUrl)}" th:src="@{|/images/fa/@{${attImg.imgName}}|}" th:alt="${attImg.imgName}">
+                            <input type="text" name="imgIds" th:value="${attImg.ino}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group mb-3" th:each="num: ${#numbers.sequence(1,5)}">
+                <input type="file" class="form-control cutom-file-input" name="attImgFile">
+                <label class="input-group-text cutom-file-label" th:text="이미지 + ${num}">Upload</label>
+            </div>
+            <button type="submit" class="btn btn-default">저장</button>
+            <button type="button" class="btn btn-default removeBtn">삭제</button>
+        </div>
+        </form>
+    </div>
+</div>
+    <script layout:fragment="script" th:inline="javascript">
+    const formObj = document.querySelector("#form-mul");
+    document.querySelector(".removeBtn").addEventListener("click", function (e){
+        e.preventDefault()
+        e.stopPropagation()
+        formObj.action = "/attraction/delete";
+        formObj.method = "post";
+        formObj.submit();
+    })
+</script>
+</body>
+</html>

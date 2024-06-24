@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+<head>
+    <meta charset="UTF-8">
+    <title>Attraction 글 상세 보기</title>
+</head>
+<body>
+<div class="container">
+    <div layout:fragment="content" class="content">
+        <h1>맛집 나도 알려 줘!</h1>
+            <div>
+                <label for="ano">
+                    <input id="ano" name="ano" type="text" th:value="${attractionDTO.ano}" readonly>
+                </label>
+                <label for="title">
+                    <input id="title" name="title" type="text" th:value="${attractionDTO.title}" readonly>
+                </label>
+                <label for="content">
+                    <input id="content" name="content" type="text" th:value="${attractionDTO.content}" readonly>
+                </label>
+                <label for="writer">
+                    <input id="writer" name="writer" type="text" th:value="${attractionDTO.writer}" readonly>
+                </label>
+                <div>
+                    <div class="row">
+                        <div class="col">
+                                <div class="card-body" th:each="attImg: ${attractionDTO.faImgDTOList}">
+                                    <img width="500px" th:if="${not #strings.isEmpty(attImg.imgUrl)}" th:src="@{|/images/fa/@{${attImg.imgName}}|}" th:alt="${attImg.imgName}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a th:href="|@{/attraction/modify(ano=${attractionDTO.ano})}|" class="btn btn-default">
+                        수정
+                    </a>
+
+            </div>
+    </div>
+</div>
+</body>
+</html>
