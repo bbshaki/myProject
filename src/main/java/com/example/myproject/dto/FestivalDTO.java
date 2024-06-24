@@ -26,7 +26,7 @@ public class FestivalDTO {
 
     private Progress progress; // 현재 진행 여부
 
-    private MemberUser memberUser; // writer
+    private String writer; // writer
 
     private Category category; // 지역 카테고리
 

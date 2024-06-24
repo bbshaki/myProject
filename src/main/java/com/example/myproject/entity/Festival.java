@@ -7,8 +7,12 @@ import com.example.myproject.dto.FestivalDTO;
 import com.example.myproject.entity.base.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "festival")
@@ -45,6 +49,10 @@ public class Festival extends BaseTimeEntity {
     private LocalDate scheduleF;
 
     private int viewCount; // 조회수
+
+    @OneToMany(mappedBy = "festival", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<FAImage> faImgs = new ArrayList<>();
 
     public void updateFes(FestivalDTO festivalDTO){
         this.title = festivalDTO.getTitle();

@@ -2,6 +2,7 @@ package com.example.myproject.service;
 
 import com.example.myproject.dto.AttractionDTO;
 import com.example.myproject.dto.FAImgDTO;
+import com.example.myproject.dto.MemberUserDTO;
 import com.example.myproject.entity.Attraction;
 import com.example.myproject.entity.FAImage;
 import com.example.myproject.repository.AttractionRepository;
@@ -30,10 +31,11 @@ public class AttractionService {
     private final AttractionRepository attractionRepository;
     private final FAImageService faImageService;
     private final ImgRepository imgRepository;
+    private final MemberUserRepository memberUserRepository;
 
     public Long register(AttractionDTO attractionDTO, List<MultipartFile> multipartFiles) throws Exception{
         Attraction attraction = attractionDTO.createAtt();
-        attraction.setWriter("홍길동");
+        attraction.setWriter(memberUserRepository.findMemberUserById(attractionDTO.getWriter()).getName());
         attraction.setRegTime(LocalDateTime.now());
         attractionRepository.save(attraction);
 

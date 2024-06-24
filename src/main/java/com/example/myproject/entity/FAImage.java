@@ -36,6 +36,9 @@ public class FAImage {
     public void setAttraction(Attraction attraction) {
         this.attraction = attraction;
     }
+    public void setFestival(Festival festival) {
+        this.festival = festival;
+    }
 
     public void updateImg(String originName, String imgName, String imgUrl){
         this.originName = originName;

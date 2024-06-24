@@ -10,7 +10,50 @@
 <div class="container">
     <div layout:fragment="content" class="content">
         <h1>수정은 본인만 접근 가능!</h1>
+        <h1 th:text="${errorMsg}"></h1>
+        <form id="form-mul" action="/festival/modify" method="post" enctype="multipart/form-data">
+        <div>
+            <label for="fno">
+                <input id="fno" name="fno" type="text" th:value="${festivalDTO.fno}" readonly>
+            </label>
+            <label for="title">
+                <input id="title" name="title" type="text" th:value="${festivalDTO.title}">
+            </label>
+            <label for="content">
+                <input id="content" name="content" type="text" th:value="${festivalDTO.content}">
+            </label>
+            <label for="writer">
+                <input id="writer" name="writer" type="text" th:value="${festivalDTO.writer}" readonly>
+            </label>
+            <div>
+                <div class="row">
+                    <div class="col">
+                        <div class="card-body" th:each="fesImg: ${festivalDTO.faImgDTOList}">
+                            <img width="500px" th:if="${not #strings.isEmpty(fesImg.imgUrl)}" th:src="@{|/images/fa/@{${fesImg.imgName}}|}" th:alt="${fesImg.imgName}">
+                            <input type="text" name="imgIds" th:value="${fesImg.ino}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group mb-3" th:each="num: ${#numbers.sequence(1,5)}">
+                <input type="file" class="form-control cutom-file-input" name="fesImgFile">
+                <label class="input-group-text cutom-file-label" th:text="이미지 + ${num}">Upload</label>
+            </div>
+            <button type="submit" class="btn btn-default">저장</button>
+            <button type="button" class="btn btn-default removeBtn">삭제</button>
+        </div>
+        </form>
     </div>
 </div>
+    <script layout:fragment="script" th:inline="javascript">
+    const formObj = document.querySelector("#form-mul");
+    document.querySelector(".removeBtn").addEventListener("click", function (e){
+        e.preventDefault()
+        e.stopPropagation()
+        formObj.action = "/festival/delete";
+        formObj.method = "post";
+        formObj.submit();
+    })
+</script>
 </body>
 </html>

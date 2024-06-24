@@ -9,7 +9,34 @@
 <body>
 <div class="container">
     <div layout:fragment="content" class="content">
-        <h1>축제 리스트!</h1>
+        <a th:href="|@{/festival/write}|" class="btn btn-danger">
+            글쓰기
+        </a>
+        <h2></h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Fno</th>
+                <th scope="col">title</th>
+                <th scope="col">content</th>
+                <th scope="col">writer</th>
+                <th scope="col">regTime</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="fes, status: ${fstv}">
+                <td th:value="${fes.fno}"></td>
+                <!-- T(thymeleaf 에서 제공하는 객체에 접근하는 방법)-->
+                <!--T(com.shop.constant.ItemSellStatus).SELL-->
+                <td>
+                    <a th:href="|@{/festival/read(fno=${fes.fno})}|">[[${fes.title}]]</a>
+                </td>
+                <td th:text="${fes.content}"></td>
+                <td th:text="${fes.writer}"></td>
+                <td th:text="${#temporals.format(fes.regTime, 'yyyy-MM-dd hh:mm')}"></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 </body>

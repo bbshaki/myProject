@@ -36,10 +36,6 @@ public class AttractionDTO {
 
     private static ModelMapper modelMapper = new ModelMapper();
 
-    public String changeWriter(MemberUser memberUser){
-        return this.writer = memberUser.getName();
-    }
-
     public Attraction createAtt(){
         return modelMapper.map(this, Attraction.class);
     }

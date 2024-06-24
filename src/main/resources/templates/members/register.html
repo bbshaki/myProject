@@ -5,12 +5,76 @@
 <head>
     <meta charset="UTF-8">
     <title>회원 가입</title>
+    <th:block layout:fragment="css">
+        <!--css-->
+        <style>
+            .fieldError {
+                color: darkred;
+            }
+        </style>
+    </th:block>
 </head>
 <body>
 <div class="container">
     <div layout:fragment="content" class="content">
         <h1>회원 가입!</h1>
+        <form action="/members/register" method="post" th:object="${memberUserDTO}">
+            <div class="mb-3">
+                <label for="id" class="form-label">아이디</label>
+                <input type="text" class="form-control" th:field="*{id}"  placeholder="아이디를 입력해주세요">
+                <p th:if="${#fields.hasErrors('id')}"    th:errors="*{id}" class="fieldError" >
+                </p>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">비밀번호</label>
+                <input type="text" class="form-control"  th:field="*{password}" placeholder="비밀번호를 입력해주세요">
+                <p th:if="${#fields.hasErrors('password')}"    th:errors="*{password}" class="fieldError" >
+                </p>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">이메일주소</label>
+                <input type="email" class="form-control" th:field="*{email}" placeholder="name@example.com">
+                <p th:if="${#fields.hasErrors('email')}"    th:errors="*{email}" class="fieldError" >
+                </p>
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label">이름</label>
+                <input type="text" class="form-control" th:field="*{name}"  placeholder="이름을 입력해주세요">
+                <p th:if="${#fields.hasErrors('name')}"    th:errors="*{name}" class="fieldError" >
+                </p>
+            </div>
+            <div class="mb-3">
+                <label for="phoneNumber" class="form-label">휴대전화번호</label>
+                <input type="tel"  class="form-control" th:field="*{phoneNumber}" placeholder="휴대전화번호를 입력해주세요">
+                <p th:if="${#fields.hasErrors('phoneNumber')}"    th:errors="*{phoneNumber}" class="fieldError" >
+                </p>
+            </div>
+            <div style="text-align: center">
+                <button type="submit" class="btn btn-danger regBtn">회원가입</button>
+            </div>
+        </form>
     </div>
 </div>
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            var errorMessage = [[${errorMessage}]];
+            if(errorMessage != null){
+                alert(errorMessage);
+            }
+
+            const phone = document.getElementById('phoneNumber');
+
+            phone.addEventListener('focusout', formatPhoneNumber);
+
+            function formatPhoneNumber(event) {
+                const inputValue = event.target.value; // 이벤트 객체에서 직접 입력값 가져오기
+                const formattedNumber = inputValue.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3'); // 숫자를 치환하여 포맷팅
+                event.target.value = formattedNumber; // 포맷팅된 숫자로 입력값 업데이트
+                console.log(formattedNumber)
+            }
+        });
+    </script>
+</th:block>
 </body>
 </html>

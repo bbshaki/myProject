@@ -5,12 +5,59 @@
 <head>
     <meta charset="UTF-8">
     <title>로그인</title>
+    <th:block layout:fragment="css">
+        <style>
+            .error {
+                color: #A7D2FFFF;
+            }
+        </style>
+    </th:block>
 </head>
 <body>
 <div class="container">
-    <div layout:fragment="content" class="content">
-        <h1>로그인!</h1>
-    </div>
+        <div layout:fragment="content">
+            <form action="/members/login" method="post">
+                <div class="mb-3">
+                    <label for="id" class="form-label">ID</label>
+                    <input id="id" type="id" class="form-control" name="id">
+                </div>
+
+                <!-- 비밀번호-->
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input id="password" type="tel" class="form-control"  name="password"  placeholder="비밀번호를 입력해주세요">
+                </div>
+
+                <p th:if="${loginErrorMsg}"  class="error" th:text="${loginErrorMsg}">
+
+                </p>
+                <div style="text-align: center">
+                    <button type="submit" class="btn btn-danger">로그인</button>
+                    <button type="button" class="btn btn-danger" onclick="location.href='/members/register'">회원가입</button>
+                </div>
+
+
+
+
+
+
+            </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </div>
 </div>
 </body>
 </html>

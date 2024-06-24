@@ -5,12 +5,82 @@
 <head>
     <meta charset="UTF-8">
     <title>Festival 글 쓰기</title>
+    <th:block layout:fragment="script">
+
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            var errorMessage = [[${errorMessage}]];
+
+            if (errorMessage != null) {
+                //모달로 띄우면 좀더 아름답지 않을까?
+                alert(errorMessage);
+            }
+            bindDomEvent();
+
+        })
+        function bindDomEvent() {
+            $(".form-control-file").on("click", function () {
+                console.log($(this).val())
+                if($(this).val() == "" &&  $(this).siblings(".form-control-label").val()  == "상품이미지"){
+                    $(this).siblings(".form-control-label").html("상품이미지");
+                }
+            })
+
+            $(".form-control-file").on("change", function () {
+
+                var fileName = $(this).val().split("\\").pop();
+
+                console.log(fileName)
+
+                var fileExt = fileName.substring(fileName.lastIndexOf(".")+1);
+
+                fileExt = fileExt.toLowerCase();
+
+                if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
+                    if(fileExt ==null || fileExt ==""){
+                        $(this).siblings(".form-control-label").html("이미지가 비어있습니다.");
+                        return;
+                    }
+                    alert("이미지 파일만 등록이 가능합니다.");
+                    return;
+                }
+
+                $(this).siblings(".form-control-label").html(fileName);
+
+
+            })
+
+        }
+
+    </script>
+
+
+</th:block>
 </head>
 <body>
 <div class="container">
     <div layout:fragment="content" class="content">
-        <h1>축제다 축제!</h1>
+        <h1>광고 절대 금지!</h1>
+        <form action="/festival/write" method="post" enctype="multipart/form-data">
+            <div>
+                <label for="title">
+                    <input id="title" name="title" type="text">
+                </label>
+                <label for="content">
+                    <input id="content" name="content" type="text">
+                </label>
+                <label for="writer">
+                    <input id="writer" name="writer" type="text" placeholder="나중에 principal 넣을 거임" readonly>
+                </label>
+            </div>
+                <div class="input-group mb-3" th:each="num: ${#numbers.sequence(1,5)}">
+                    <input type="file" class="form-control cutom-file-input" name="fesImgFile">
+                    <label class="input-group-text cutom-file-label" th:text="이미지 + ${num}">Upload</label>
+                </div>
+            <button type="submit">전송</button>
+        </form>
     </div>
+
 </div>
 </body>
 </html>

@@ -69,9 +69,6 @@
                 <label for="content">
                     <input id="content" name="content" type="text">
                 </label>
-                <label for="writer">
-                    <input id="writer" name="writer" type="text" placeholder="나중에 principal 넣을 거임" readonly>
-                </label>
             </div>
                 <div class="input-group mb-3" th:each="num: ${#numbers.sequence(1,5)}">
                     <input type="file" class="form-control cutom-file-input" name="attImgFile">
