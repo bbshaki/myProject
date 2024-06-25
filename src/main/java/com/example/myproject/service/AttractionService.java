@@ -35,7 +35,7 @@ public class AttractionService {
 
     public Long register(AttractionDTO attractionDTO, List<MultipartFile> multipartFiles) throws Exception{
         Attraction attraction = attractionDTO.createAtt();
-        attraction.setWriter(memberUserRepository.findMemberUserById(attractionDTO.getWriter()).getName());
+        attraction.setWriter(memberUserRepository.findMemberUserById(attractionDTO.getWriter()).getId());
         attraction.setRegTime(LocalDateTime.now());
         attractionRepository.save(attraction);
 

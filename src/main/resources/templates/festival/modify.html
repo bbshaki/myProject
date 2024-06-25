@@ -14,7 +14,7 @@
         <form id="form-mul" action="/festival/modify" method="post" enctype="multipart/form-data">
         <div>
             <label for="fno">
-                <input id="fno" name="fno" type="text" th:value="${festivalDTO.fno}" readonly>
+                <input id="fno" name="fno" type="hidden" th:value="${festivalDTO.fno}" readonly>
             </label>
             <label for="title">
                 <input id="title" name="title" type="text" th:value="${festivalDTO.title}">
@@ -22,15 +22,12 @@
             <label for="content">
                 <input id="content" name="content" type="text" th:value="${festivalDTO.content}">
             </label>
-            <label for="writer">
-                <input id="writer" name="writer" type="text" th:value="${festivalDTO.writer}" readonly>
-            </label>
             <div>
                 <div class="row">
                     <div class="col">
                         <div class="card-body" th:each="fesImg: ${festivalDTO.faImgDTOList}">
                             <img width="500px" th:if="${not #strings.isEmpty(fesImg.imgUrl)}" th:src="@{|/images/fa/@{${fesImg.imgName}}|}" th:alt="${fesImg.imgName}">
-                            <input type="text" name="imgIds" th:value="${fesImg.ino}">
+                            <input type="hidden" name="imgIds" th:value="${fesImg.ino}">
                         </div>
                     </div>
                 </div>

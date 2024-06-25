@@ -70,11 +70,20 @@
                     <input id="content" name="content" type="text">
                 </label>
             </div>
+            <div th:if =  "${#lists.isEmpty(attractionDTO.faImgDTOList)}">
                 <div class="input-group mb-3" th:each="num: ${#numbers.sequence(1,5)}">
                     <input type="file" class="form-control cutom-file-input" name="attImgFile">
-                    <label class="input-group-text cutom-file-label" th:text="상품이미지 + ${num}">Upload</label>
+                    <label class="input-group-text cutom-file-label" th:text="이미지 + ${num}">Upload</label>
                 </div>
-            <button type="submit">전송</button>
+            </div>
+            <div th:if =  "${not #lists.isEmpty(attractionDTO.faImgDTOList)}">
+                <div class="input-group  mb-3" th:each="FAImgDTO, status: ${attractionDTO.faImgDTOList}">
+                    <input type="file"  class="form-control form-control-file" th:id="${status.index+1}" name="attImgFile" >
+                    <input type="text" class="form-control"  name="itemImgIds" th:value="${FAImgDTO.ino}">
+                    <label th:for="${status.index+1}" class="input-group-text form-control-label" th:text="${not #strings.isEmpty(FAImgDTO.originName)} ? ${itemImgDto.oriImgName} : '이미지'" >Upload</label>
+                </div>
+            </div>
+                <button type="submit">전송</button>
         </form>
     </div>
 

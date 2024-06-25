@@ -25,16 +25,16 @@ public class AttractionController {
     private final AttractionService attractionService;
 
     @GetMapping("/write")
-    public void attG(){
-
+    public void attG(AttractionDTO attractionDTO, Model model){
+        model.addAttribute("attractionDTO", attractionDTO);
     }
 
     @PostMapping("/write")
     public String attWrite(AttractionDTO attractionDTO, @RequestParam("attImgFile") List<MultipartFile> attImgFileList,
                            Model model, Principal principal){
-
         if (attImgFileList.get(0).isEmpty() && attractionDTO.getAno() == null){
             model.addAttribute("errorMsg", "첫번째 이미지는 팔수 입력 값입니다");
+            return "/attraction/write";
         }
 
         try {
@@ -70,9 +70,15 @@ public class AttractionController {
     }
 
     @GetMapping("/modify")
-    public void attMod(Long ano, Model model){
-        model.addAttribute("attractionDTO", attractionService.getDetail(ano));
+    public String attMod(Long ano, Model model, Principal principal){
+        AttractionDTO attractionDTO = attractionService.getDetail(ano);
+        log.info(attractionDTO.getWriter());
+        if (!principal.getName().equals(attractionDTO.getWriter())){
+            return "redirect:/attraction/read?ano=" + ano;
+        }
+        model.addAttribute("attractionDTO", attractionDTO);
         log.info("이 ano는 도대체 무엇인가" + ano);
+        return "/attraction/modify";
     }
 
     @PostMapping("/modify")

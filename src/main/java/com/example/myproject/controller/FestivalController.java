@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -31,18 +32,18 @@ public class FestivalController {
     }
 
     @PostMapping("/write")
-    public String writeP(FestivalDTO festivalDTO, @RequestParam("fesImgFile")List<MultipartFile> fesImgFileList, Model model){
+    public String writeP(FestivalDTO festivalDTO, @RequestParam("fesImgFile") List<MultipartFile> fesImgFileList,
+                         Model model, Principal principal){
         if (fesImgFileList.get(0).isEmpty() && festivalDTO.getFno() == null){
             model.addAttribute("errorMsg", "첫번째 이미지는 팔수 입력 값입니다");
         }
         try {
+            festivalDTO.setWriter(principal.getName());
             festivalService.register(festivalDTO, fesImgFileList);
         } catch (Exception e) {
             model.addAttribute("errorMsg", "등록 중 에러가 발생했습니다.");
             return "/festival/write";
         }
-        log.info(festivalDTO);
-        log.info(fesImgFileList);
 
         return "redirect:/festival/list";
     }
@@ -67,8 +68,12 @@ public class FestivalController {
     }
 
     @GetMapping("/modify")
-    public String fesModify(Long fno, Model model){
-        model.addAttribute("festivalDTO", festivalService.getDtl(fno));
+    public String fesModify(Long fno, Model model, Principal principal){
+        FestivalDTO festivalDTO = festivalService.getDtl(fno);
+        if (!principal.getName().equals(festivalDTO.getWriter())){
+            return "redirect:/festival/read?fno=" + fno;
+        }
+        model.addAttribute("festivalDTO", festivalDTO);
         return "festival/modify";
     }
 

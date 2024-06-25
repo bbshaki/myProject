@@ -21,7 +21,7 @@
         function bindDomEvent() {
             $(".form-control-file").on("click", function () {
                 console.log($(this).val())
-                if($(this).val() == "" &&  $(this).siblings(".form-control-label").val()  == "상품이미지"){
+                if($(this).val() == "" &&  $(this).siblings(".form-control-label").val()  == "이미지"){
                     $(this).siblings(".form-control-label").html("상품이미지");
                 }
             })
@@ -68,9 +68,6 @@
                 </label>
                 <label for="content">
                     <input id="content" name="content" type="text">
-                </label>
-                <label for="writer">
-                    <input id="writer" name="writer" type="text" placeholder="나중에 principal 넣을 거임" readonly>
                 </label>
             </div>
                 <div class="input-group mb-3" th:each="num: ${#numbers.sequence(1,5)}">

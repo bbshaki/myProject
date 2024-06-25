@@ -10,6 +10,7 @@
 <div class="container">
     <div layout:fragment="content" class="content">
         <h1>맛집 나도 알려 줘!</h1>
+        <form id="form-mul" action="/festival/modify" method="get" enctype="multipart/form-data">
             <div>
                 <label for="fno">
                     <input id="fno" name="fno" type="text" th:value="${festivalDTO.fno}" readonly>
@@ -26,18 +27,29 @@
                 <div>
                     <div class="row">
                         <div class="col">
-                                <div class="card-body" th:each="fesImg: ${festivalDTO.faImgDTOList}">
-                                    <img width="500px" th:if="${not #strings.isEmpty(fesImg.imgUrl)}" th:src="@{|/images/fa/@{${fesImg.imgName}}|}" th:alt="${fesImg.imgName}">
-                                </div>
+                            <div class="card-body" th:each="fesImg: ${festivalDTO.faImgDTOList}">
+                                <img width="500px" th:if="${not #strings.isEmpty(fesImg.imgUrl)}" th:src="@{|/images/fa/@{${fesImg.imgName}}|}" th:alt="${fesImg.imgName}">
                             </div>
                         </div>
                     </div>
-                    <a th:href="|@{/festival/modify(fno=${festivalDTO.fno})}|" class="btn btn-default">
-                        수정
-                    </a>
-
+                </div>
+                <th:block th:if="${festivalDTO.writer} == ${#authentication.principal.username}">
+                    <button type="submit" class="btn btn-default">수정</button>
+                    <button type="button" class="btn btn-default removeBtn">삭제</button>
+                </th:block>
             </div>
+        </form>
     </div>
 </div>
+    <script layout:fragment="script" th:inline="javascript">
+        const aaa = document.querySelector("#form-mul");
+        document.querySelector(".removeBtn").addEventListener("click", function (e){
+            e.preventDefault()
+            e.stopPropagation()
+            aaa.action = "/festival/delete";
+            aaa.method = "post";
+            aaa.submit();
+        })
+    </script>
 </body>
 </html>

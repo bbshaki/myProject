@@ -7,6 +7,7 @@ import com.example.myproject.entity.FAImage;
 import com.example.myproject.entity.Festival;
 import com.example.myproject.repository.FestivalRepository;
 import com.example.myproject.repository.ImgRepository;
+import com.example.myproject.repository.MemberUserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,10 +28,11 @@ public class FestivalService {
     private final FestivalRepository festivalRepository;
     private final FAImageService faImageService;
     private final ImgRepository imgRepository;
+    private final MemberUserRepository memberUserRepository;
 
     public Long register(FestivalDTO festivalDTO, List<MultipartFile> multipartFiles) throws Exception{
         Festival festival = festivalDTO.createFes();
-        festival.setWriter("홍길동");
+        festival.setWriter(memberUserRepository.findMemberUserById(festivalDTO.getWriter()).getId());
         festival.setRegTime(LocalDateTime.now());
         festivalRepository.save(festival);
 
@@ -82,6 +84,7 @@ public class FestivalService {
         List<Long> imgIds = festivalDTO.getImgIds();
 
         for (int i = 0; i < multipartFiles.size(); i++){
+            log.info("여기에 들어오시나요 여기는 fesservice 입니덩?");
             faImageService.updateImg(imgIds.get(i), multipartFiles.get(i));
         }
         return festival.getFno();

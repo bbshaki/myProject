@@ -28,9 +28,11 @@ public class SecurityConfig  {
                 .authorizeHttpRequests(
                         (authorizeHttpRequests) -> authorizeHttpRequests
                                 .requestMatchers("/attraction/write").authenticated()
+                                .requestMatchers("/attraction/read").authenticated()
                                 .requestMatchers("/attraction/modify").authenticated()
                                 .requestMatchers("/attraction/delete").authenticated()
                                 .requestMatchers("/festival/write").authenticated()
+                                .requestMatchers("/festival/read").authenticated()
                                 .requestMatchers("/festival/modify").authenticated()
                                 .requestMatchers("/festival/delete").authenticated()
                                 .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
@@ -55,7 +57,7 @@ public class SecurityConfig  {
 
                 //현재 모든 경로에 대해서 csrf 미사용
 
-                .formLogin( formLogin -> formLogin.loginPage("/members/login")
+                .formLogin( login -> login.loginPage("/members/login")
                         .defaultSuccessUrl("/")
                         .usernameParameter("id")
                         .failureUrl("/members/login/error")

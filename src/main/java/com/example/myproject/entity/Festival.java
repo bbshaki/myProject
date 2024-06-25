@@ -54,6 +54,16 @@ public class Festival extends BaseTimeEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<FAImage> faImgs = new ArrayList<>();
 
+    public void addFAimg(FAImage faImage) {
+        faImgs.add(faImage);
+        faImage.setFestival(this);
+    }
+
+    public void removeFAimg(FAImage faImage) {
+        faImgs.remove(faImage);
+        faImage.setFestival(null);
+    }
+
     public void updateFes(FestivalDTO festivalDTO){
         this.title = festivalDTO.getTitle();
         this.category = festivalDTO.getCategory();
