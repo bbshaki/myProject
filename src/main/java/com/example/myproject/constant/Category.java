@@ -1,5 +1,8 @@
 package com.example.myproject.constant;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public enum Category {
 
     SEOUL("서울"), GYEONGGI("경기"), GANGWON("강원"), CHUNGNAM("충남"), CHUNGBUK("충북"),
@@ -11,6 +14,7 @@ public enum Category {
     Category(String krName){
         this.KrName = krName;
     }
+
 
     public String getKrName(){
         return KrName;

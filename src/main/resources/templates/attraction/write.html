@@ -5,7 +5,59 @@
 <head>
     <meta charset="UTF-8">
     <title>Attraction 글 쓰기</title>
-    <th:block layout:fragment="script">
+
+    <th:block layout:fragment="css">
+        <!--css-->
+        <style>
+            .fieldError {
+                color: red;
+            }
+        </style>
+    </th:block>
+
+
+</head>
+<body>
+<div class="container">
+    <div layout:fragment="content" class="content">
+        <form action="/attraction/write" method="post" enctype="multipart/form-data" th:object="${attractionDTO}">
+            <select class="form-select form-select-sm" aria-label="Small select example">
+                <option>지역을 선택 하세요</option>
+                <th:block th:if="${not #lists.isEmpty(categotys)}"  th:each="cate: ${categotys}">
+                    <option th:text="${cate}"></option>
+                </th:block>
+            </select>
+            <div>
+                <label for="title" class="form-label"></label>
+                <input class="form-control" th:field="*{title}" type="text" placeholder="제목을 입력해 주세요">
+                <p th:if="${#fields.hasErrors('title')}"    th:errors="*{title}" class="fieldError" >
+                </p>
+            </div>
+            <div>
+                <label for="content" class="form-label"></label>
+                <input class="form-control" th:field="*{content}" type="text" PLACEHOLDER="내용을 입력해 주세요">
+                <p th:if="${#fields.hasErrors('content')}"    th:errors="*{content}" class="fieldError" >
+                </p>
+            </div>
+            <div th:if =  "${#lists.isEmpty(attractionDTO.faImgDTOList)}">
+                <div class="input-group mb-3" th:each="num: ${#numbers.sequence(1,5)}">
+                    <input type="file" class="form-control cutom-file-input" name="attImgFile">
+                    <label class="input-group-text cutom-file-label" th:text="이미지 + ${num}">Upload</label>
+                </div>
+            </div>
+            <div th:if =  "${not #lists.isEmpty(attractionDTO.faImgDTOList)}">
+                <div class="input-group  mb-3" th:each="FAImgDTO, status: ${attractionDTO.faImgDTOList}">
+                    <input type="file"  class="form-control form-control-file" th:id="${status.index+1}" name="attImgFile" >
+                    <input type="text" class="form-control"  name="itemImgIds" th:value="${FAImgDTO.ino}">
+                    <label th:for="${status.index+1}" class="input-group-text form-control-label" th:text="${not #strings.isEmpty(FAImgDTO.originName)} ? ${FAImgDTO.originName} : '이미지'" >Upload</label>
+                </div>
+            </div>
+                <button type="submit" class="btn btn-danger">전송</button>
+        </form>
+    </div>
+
+</div>
+<th:block layout:fragment="script">
 
     <script th:inline="javascript">
         $(document).ready(function () {
@@ -21,8 +73,8 @@
         function bindDomEvent() {
             $(".form-control-file").on("click", function () {
                 console.log($(this).val())
-                if($(this).val() == "" &&  $(this).siblings(".form-control-label").val()  == "상품이미지"){
-                    $(this).siblings(".form-control-label").html("상품이미지");
+                if($(this).val() == "" &&  $(this).siblings(".form-control-label").val()  == "이미지"){
+                    $(this).siblings(".form-control-label").html("이미지");
                 }
             })
 
@@ -56,37 +108,5 @@
 
 
 </th:block>
-</head>
-<body>
-<div class="container">
-    <div layout:fragment="content" class="content">
-        <h1>광고 절대 금지!</h1>
-        <form action="/attraction/write" method="post" enctype="multipart/form-data">
-            <div>
-                <label for="title">
-                    <input id="title" name="title" type="text">
-                </label>
-                <label for="content">
-                    <input id="content" name="content" type="text">
-                </label>
-            </div>
-            <div th:if =  "${#lists.isEmpty(attractionDTO.faImgDTOList)}">
-                <div class="input-group mb-3" th:each="num: ${#numbers.sequence(1,5)}">
-                    <input type="file" class="form-control cutom-file-input" name="attImgFile">
-                    <label class="input-group-text cutom-file-label" th:text="이미지 + ${num}">Upload</label>
-                </div>
-            </div>
-            <div th:if =  "${not #lists.isEmpty(attractionDTO.faImgDTOList)}">
-                <div class="input-group  mb-3" th:each="FAImgDTO, status: ${attractionDTO.faImgDTOList}">
-                    <input type="file"  class="form-control form-control-file" th:id="${status.index+1}" name="attImgFile" >
-                    <input type="text" class="form-control"  name="itemImgIds" th:value="${FAImgDTO.ino}">
-                    <label th:for="${status.index+1}" class="input-group-text form-control-label" th:text="${not #strings.isEmpty(FAImgDTO.originName)} ? ${itemImgDto.oriImgName} : '이미지'" >Upload</label>
-                </div>
-            </div>
-                <button type="submit">전송</button>
-        </form>
-    </div>
-
-</div>
 </body>
 </html>

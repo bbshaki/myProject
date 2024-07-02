@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+<head>
+    <meta charset="UTF-8">
+    <title>Todo List</title>
+</head>
+<body>
+<div class="container">
+    <div layout:fragment="content" class="content">
+        <h1>~~~~My Todo~~~~</h1>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Tno</th>
+                <th scope="col">title</th>
+                <th scope="col">Ano</th>
+                <th scope="col">Fno</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="todo, status: ${todoList}">
+                <td th:value="${todo.fno}"></td>
+                <td>
+                    <a href="#">[[${todo.title}]]</a>
+                </td>
+                <td th:text="${todo.ano}"></td>
+                <td th:text="${todo.fno}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

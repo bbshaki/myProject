@@ -6,6 +6,7 @@ import com.example.myproject.entity.Attraction;
 import com.example.myproject.entity.Festival;
 import com.example.myproject.entity.MemberUser;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.modelmapper.ModelMapper;
 
@@ -30,8 +31,10 @@ public class FestivalDTO {
 
     private Category category; // 지역 카테고리
 
+    @NotBlank(message = "제목은 필수 입니다!")
     private String title;
 
+    @NotBlank(message = "내용은 필수 입니다!")
     private String content;
 
     private LocalDate scheduleS;

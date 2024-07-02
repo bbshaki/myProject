@@ -1,14 +1,17 @@
 package com.example.myproject.controller;
 
+import com.example.myproject.constant.Category;
 import com.example.myproject.dto.AttractionDTO;
 import com.example.myproject.dto.FestivalDTO;
 import com.example.myproject.service.FestivalService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -27,21 +31,34 @@ public class FestivalController {
     private final FestivalService festivalService;
 
     @GetMapping("/write")
-    public String fesWrite(){
+    public String fesWrite(Model model){
+        model.addAttribute("festivalDTO", new FestivalDTO());
+        List<String> stringList = new ArrayList<>();
+
+        for (Category a : Category.values()){
+            stringList.add(a.getKrName());
+        }
+
+        model.addAttribute("categotys", stringList);
         return "festival/write";
     }
 
     @PostMapping("/write")
-    public String writeP(FestivalDTO festivalDTO, @RequestParam("fesImgFile") List<MultipartFile> fesImgFileList,
+    public String writeP(@Valid FestivalDTO festivalDTO, BindingResult bindingResult,
+                         @RequestParam("fesImgFile") List<MultipartFile> fesImgFileList,
                          Model model, Principal principal){
+        if (bindingResult.hasErrors()){
+            return "/festival/write";
+        }
+
         if (fesImgFileList.get(0).isEmpty() && festivalDTO.getFno() == null){
-            model.addAttribute("errorMsg", "첫번째 이미지는 팔수 입력 값입니다");
+            model.addAttribute("errorMessage", "첫번째 이미지는 팔수 입력 값입니다");
         }
         try {
             festivalDTO.setWriter(principal.getName());
             festivalService.register(festivalDTO, fesImgFileList);
         } catch (Exception e) {
-            model.addAttribute("errorMsg", "등록 중 에러가 발생했습니다.");
+            model.addAttribute("errorMessage", "등록 중 에러가 발생했습니다.");
             return "/festival/write";
         }
 

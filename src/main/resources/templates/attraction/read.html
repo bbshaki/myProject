@@ -10,6 +10,9 @@
 <div class="container">
     <div layout:fragment="content" class="content">
         <h1>맛집 나도 알려 줘!</h1>
+        <button class="todoBtn">
+            <i class="bi bi-bag-heart"></i>
+        </button>
         <form id="form-mul" action="/attraction/modify" method="get" enctype="multipart/form-data">
             <div>
                 <label for="ano">
@@ -49,6 +52,28 @@
             aaa.action = "/attraction/delete";
             aaa.method = "post";
             aaa.submit();
+        })
+
+        $(document).ready(function (){
+            let todoBtn = $(".todoBtn")
+            let ano = [[${attractionDTO.ano}]]
+
+            todoBtn.on("click", function (){
+                let todoData = {"ano" : ano}
+                $.ajax({
+                    url : "/todo/new",
+                    type : "post",
+                    contentType : "application/json; charset=UTF-8",
+                    data : JSON.stringify(todoData),
+                    dataType : "json",
+                    success : function (result,status) {
+                        alert(result + "등록 완료????");
+                    },
+                    error : function (result, status, error) {
+                        alert("확인요망 : " + result.responseText)
+                        }
+                })
+            })
         })
     </script>
 </body>

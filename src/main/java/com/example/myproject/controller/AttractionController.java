@@ -1,9 +1,11 @@
 package com.example.myproject.controller;
 
+import com.example.myproject.constant.Category;
 import com.example.myproject.dto.AttractionDTO;
 import com.example.myproject.entity.Attraction;
 import com.example.myproject.service.AttractionService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -14,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -25,15 +28,33 @@ public class AttractionController {
     private final AttractionService attractionService;
 
     @GetMapping("/write")
-    public void attG(AttractionDTO attractionDTO, Model model){
-        model.addAttribute("attractionDTO", attractionDTO);
+    public String attG(Model model){
+        model.addAttribute("attractionDTO", new AttractionDTO());
+
+        List<String> stringList = new ArrayList<>();
+
+        for (Category a : Category.values()){
+            stringList.add(a.getKrName());
+        }
+
+        model.addAttribute("categotys", stringList);
+        return "/attraction/write";
     }
 
     @PostMapping("/write")
-    public String attWrite(AttractionDTO attractionDTO, @RequestParam("attImgFile") List<MultipartFile> attImgFileList,
+    public String attWrite(@Valid AttractionDTO attractionDTO, BindingResult bindingResult,
+                           @RequestParam("attImgFile") List<MultipartFile> attImgFileList,
                            Model model, Principal principal){
+        log.info("내용?"+ attractionDTO.getContent());
+        log.info("타이틀?" + attractionDTO.getTitle());
+
+        if (bindingResult.hasErrors()){
+            log.info(bindingResult.hasErrors());
+            return "/attraction/write";
+        }
+
         if (attImgFileList.get(0).isEmpty() && attractionDTO.getAno() == null){
-            model.addAttribute("errorMsg", "첫번째 이미지는 팔수 입력 값입니다");
+            model.addAttribute("errorMessage", "첫번째 이미지는 팔수 입력 값입니다");
             return "/attraction/write";
         }
 
@@ -41,7 +62,7 @@ public class AttractionController {
             attractionDTO.setWriter(principal.getName());
             attractionService.register(attractionDTO, attImgFileList);
         } catch (Exception e) {
-            model.addAttribute("errorMsg", "등록 중 에러가 발생했습니다.");
+            model.addAttribute("errorMessage", e.getMessage());
             return "/attraction/write";
         }
 
