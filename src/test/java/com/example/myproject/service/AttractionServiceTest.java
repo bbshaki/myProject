@@ -40,15 +40,4 @@ public class AttractionServiceTest {
         log.info(attractionDTO);
 
     }
-
-    @Test
-    public void testReply(){
-        ReplyDTO replyDTO = ReplyDTO.builder()
-                .ano(3L)
-                .fno(null)
-                .comment("cccccccc")
-                .build();
-        replyService.register(replyDTO);
-        log.info(replyDTO);
-    }
 }

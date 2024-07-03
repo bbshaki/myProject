@@ -9,7 +9,10 @@
 <body>
 <div class="container">
     <div layout:fragment="content" class="content">
-        <h1>맛집 나도 알려 줘!</h1>
+        <h1>축제 나도 알려 줘!</h1>
+        <button class="todoBtn">
+            <i class="bi bi-bag-heart"></i>
+        </button>
         <form id="form-mul" action="/festival/modify" method="get" enctype="multipart/form-data">
             <div>
                 <label for="fno">
@@ -36,19 +39,254 @@
                 <th:block th:if="${festivalDTO.writer} == ${#authentication.principal.username}">
                     <button type="submit" class="btn btn-default">수정</button>
                     <button type="button" class="btn btn-default removeBtn">삭제</button>
+                    <script>
+                        const aaa = document.querySelector("#form-mul");
+                        document.querySelector(".removeBtn").addEventListener("click", function (e){
+                            e.preventDefault()
+                            e.stopPropagation()
+                            aaa.action = "/festival/delete";
+                            aaa.method = "post";
+                            aaa.submit();
+                        })
+                    </script>
                 </th:block>
             </div>
         </form>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-comments fa-fw"></i> Reply
+                <button type="button" class="btn btn-primary replyRegister" data-bs-toggle="modal" data-bs-target="#new-modal">
+                    New Reply</button>
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <ul class="chat replyList">
+                    <li class="clearfix"><div class="chat-body clearfix"><div class="header">
+                        <strong class="primary-font"></strong><small class="pull-right text-muted">
+                        <i class="fa fa-clock-o fa-fw"></i></small>
+                    </div><p></p></div></li>
+
+
+                </ul>
+
+                <div class="col-sm-6">
+                    <div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate">
+                        <ul class="pagination">
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="new-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <label class="comment1">내용</label>
+                                <input class="form-control comment comment1" type="text">
+                                <label class="regTime1">등록일자</label>
+                                <input class="form-control regTime regTime1" type="hidden">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="closeBtn">Close</button>
+                                <button type="button" class="btn btn-default modBtn" >Modify</button>
+                                <button type="button" class="btn btn-default reBtn">Remove</button>
+                                <button type="button" class="btn btn-default saveBtn">Save</button>
+
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+
+            </div>
+        </div>
+        <script src="/js/reply.js"></script>
     </div>
 </div>
     <script layout:fragment="script" th:inline="javascript">
-        const aaa = document.querySelector("#form-mul");
-        document.querySelector(".removeBtn").addEventListener("click", function (e){
-            e.preventDefault()
-            e.stopPropagation()
-            aaa.action = "/festival/delete";
-            aaa.method = "post";
-            aaa.submit();
+
+
+        $(document).ready(function (){
+            let todoBtn = $(".todoBtn")
+            let fno = [[${festivalDTO.fno}]]
+
+            todoBtn.on("click", function (){
+                let todoData = {"fno" : fno}
+                $.ajax({
+                    url : "/todo/new",
+                    type : "post",
+                    contentType : "application/json; charset=UTF-8",
+                    data : JSON.stringify(todoData),
+                    dataType : "json",
+                    success : function (result,status) {
+                        alert("todo 등록이 완료되었습니다!");
+                    },
+                    error : function (result, status, error) {
+                        alert("중복 등록은 불가합니다!")
+                    }
+                })
+            })
+            const result = [[${result}]]
+            if (result) {
+                alert(result)
+            }
+
+            let str = "";       //ul태그 안에 들어갈 html
+            let replyList = $(".replyList")     //댓글이 달리는 ul 태그
+            let str2 = "";  //댓글 페이징 처리를 위한 str2
+            let pagination = $(".pagination")   //댓글 페이징 처리를 위한 ul 태그
+            let replyRegister = $(".replyRegister");    //댓글 등록 버튼 모달 Btn
+
+            let comment1 = $(".comment1");        //label + input
+            let replier1 = $(".replier1");        //label + input
+            let regTime1 = $(".regTime1");
+
+            let comment = $(".comment");        //input 작성내용
+            let replier = $(".replier");        //input 작성자
+            let regTime = $(".regTime");    //input 등록일자
+
+            let modal = $("#new-modal");        //모달 전체
+            let saveBtn = $(".saveBtn");        //저장 버튼
+            let modBtn = $(".modBtn");          //수정 버튼
+            let reBtn = $(".reBtn");    //삭제 버튼
+
+
+            let thisPage = 1;
+            /*변수 선언*/
+
+
+            /*저장 버튼 클릭시*/
+            saveBtn.on("click", function () {
+                let reply = {"fno": fno, "comment": comment.val()}
+                let url = "/replies/new";
+                replyService.register(reply, url, function (data) {
+                    alert("댓글이 등록되었습니다.")
+                    showList(1);
+                })
+                modal.modal("hide")
+            })
+            /*수정 버튼 클릭시*/
+            modBtn.on("click", function () {
+                let reply = {"rno": modal.data("rno"), "comment": comment.val()}
+                let url = "/replies/modify/"
+                replyService.modify(reply, url, function (data) {
+                    console.log(data)
+                    alert("댓글이 수정되었습니다")
+                    showList(thisPage);
+                })
+                modal.modal("hide")
+            })
+            /*삭제 버튼 클릭시*/
+            reBtn.on("click", function () {
+                let url = "/replies/remove/"
+                replyService.remove(modal.data("rno"), url, function (data) {
+                    alert("댓글이 삭제되었습니다")
+                    showList(data.page);
+                })
+                modal.modal("hide")
+            })
+
+            //댓글 등록 버튼 클릭시
+            replyRegister.on("click", function (e) {
+                modal.find("button[id != closeBtn]").hide()     //버튼 중 id 가 closeBtn 이 아닌 것을 찾아서 숨긴다.
+                modal.find("input").hide();     //input 태그 전부 숨기기
+                modal.find("label").hide();
+
+                comment.val("");      //closeBtn 누르고 다시 들어오면 입력값 사라짐
+                regTime.val("");
+
+                comment1.show()
+                replier1.show()
+                saveBtn.show()
+
+            });
+
+            //댓글 리스트 클릭시 수정 모달창 오픈
+            replyList.on("click", "li", function (e) {
+                modal.modal("show")
+                modal.find("button[id != closeBtn]").hide()     //버튼 중 id 가 closeBtn 이 아닌 것을 찾아서 숨긴다.
+                modal.find("input").hide();     //input 태그 전부 숨기기
+                modal.find("label").hide();
+                comment.val("");      //closeBtn 누르고 다시 들어오면 입력값 사라짐
+                replier.val("");
+                regTime.val("");
+                comment1.show()
+                replier1.show()
+
+                replier.attr("readonly", true)
+                regTime.attr("readonly", true)
+                let rno = $(this).data("num");
+                let url = "/replies/get/"
+                replyService.read(rno, url, function (data) {
+                    console.log(data)
+                    let id = [[${#authentication.getName()}]]
+                    if (data.replier == id){
+                        modBtn.show()
+                        reBtn.show()
+                    }
+                    comment.val(data.comment);
+                    replier.val(data.replier);
+                    regTime.val(data.regTime);
+                    modal.data("rno", data.rno) //저장
+                    console.log(modal.data("rno"))
+                });
+            });
+
+            //댓글 목록
+            let showList = function (page) {
+                str = "";
+                str2 = "";
+                let url = "/replies/list/";
+                replyService.list(page, url, fno, function (data) {
+                    console.log(data)
+                    thisPage = data.page;
+                    if (data == null || data.dtoList == null || data.dtoList.length == null) {
+                        return null;
+                    } else {
+                        for (let i = 0; i < data.dtoList.length; i++) {
+                            str += `<li data-num="${data.dtoList[i].rno}" class="clearfix"><div class="chat-body clearfix"><div class="header">
+                            <strong class="primary-font">${data.dtoList[i].replier}</strong><small class="pull-right text-muted">
+                            <i class="fa fa-clock-o fa-fw"></i>${data.dtoList[i].regTime}</small>
+                            </div><p>${data.dtoList[i].comment}</p></div></li>`;
+                        }
+                        if (data.prev) {
+                            str2 += `<li class="page-item previous " aria-controls="dataTables-example" tabindex="0" id="dataTables-example_previous">
+                    <a class="page-link" data-num="${data.start - 1}">이전</a>
+                </li>`;
+                        }
+                        for (let i = data.start, j = data.end; i <= j; i++) {
+                            str2 += `<li class="page-item ${i == data.page ? 'active' : ''}" aria-controls="dataTables-example" tabIndex="0">
+                        <a class="page-link" data-num="${i}">${i}</a>
+                    </li>`;
+
+                        }
+                        if (data.next) {
+                            str2 += `<li class="page-item" aria-controls="dataTables-example" tabindex="0" id="dataTables-example_next">
+                    <a class="page-link" data-num="${data.end + 1}">Next</a>
+                </li>`
+                        }
+                        pagination.html(str2);
+                        replyList.html(str);
+
+                    }
+                })
+                //댓글 페이징
+                pagination.on("click", "a", function (e) {
+                    let target = $(e.target).data("num")
+                    showList(target)
+                })
+
+
+
+
+            }
+
+            showList(1);
+
         })
     </script>
 </body>

@@ -9,31 +9,33 @@
 <body>
 <div class="container">
     <div layout:fragment="content" class="content">
-        <h4>명소 탐방</h4><br>
+
         <a th:href="|@{/attraction/write}|" class="btn btn-danger">
             글쓰기
         </a>
+        <br>
+        <br>
         <table class="table">
             <thead>
             <tr>
-                <th scope="col">Ano</th>
-                <th scope="col">title</th>
-                <th scope="col">content</th>
-                <th scope="col">writer</th>
-                <th scope="col">regTime</th>
+                <th scope="col" class="">글 번호</th>
+                <th scope="col" class="">제목</th>
+                <th scope="col" class="text-center">작성자</th>
+                <th scope="col" class="text-center">작성일</th>
+                <th scope="col" class="text-center">조회수</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="att, status: ${atrc}">
-                <td th:value="${att.ano}"></td>
+                <td th:text="${att.ano}" class=""></td>
                 <!-- T(thymeleaf 에서 제공하는 객체에 접근하는 방법)-->
                 <!--T(com.shop.constant.ItemSellStatus).SELL-->
                 <td>
-                    <a th:href="|@{/attraction/read(ano=${att.ano})}|">[[${att.title}]]</a>
+                    <a th:href="|@{/attraction/read(ano=${att.ano})}|" class="text-center">[[${att.title}]]</a>
                 </td>
-                <td th:text="${att.content}"></td>
-                <td th:text="${att.writer}"></td>
-                <td th:text="${#temporals.format(att.regTime, 'yyyy-MM-dd hh:mm')}"></td>
+                <td th:text="${att.writer}" class="text-center"></td>
+                <td th:text="${#temporals.format(att.regTime, 'yyyy-MM-dd hh:mm')}" class="text-center"></td>
+                <td th:text="${att.viewCount}" class="text-center"></td>
             </tr>
             </tbody>
         </table>

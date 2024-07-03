@@ -71,6 +71,8 @@ public class FestivalService {
         }
 
         Festival festival = festivalRepository.findById(fno).orElseThrow(EntityNotFoundException::new);
+        festival.setViewCount(festival.getViewCount() + 1);
+        festivalRepository.save(festival);
         FestivalDTO festivalDTO = FestivalDTO.of(festival);
         festivalDTO.setFaImgDTOList(faImgDTOList);
         return festivalDTO;

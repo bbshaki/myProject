@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.validator.constraints.UniqueElements;
 
 @Entity
 @Getter
@@ -22,11 +23,11 @@ public class Todo {
     private MemberUser memberUser;
 
     @ManyToOne
-    @JoinColumn(name = "fno")
+    @JoinColumn(name = "fno", unique = true)
     private Festival festival;
 
     @ManyToOne
-    @JoinColumn(name = "ano")
+    @JoinColumn(name = "ano", unique = true)
     private Attraction attraction;
 
 }

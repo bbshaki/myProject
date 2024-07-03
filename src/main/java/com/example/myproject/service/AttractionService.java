@@ -3,11 +3,15 @@ package com.example.myproject.service;
 import com.example.myproject.dto.AttractionDTO;
 import com.example.myproject.dto.FAImgDTO;
 import com.example.myproject.dto.MemberUserDTO;
+import com.example.myproject.dto.TodoDTO;
 import com.example.myproject.entity.Attraction;
 import com.example.myproject.entity.FAImage;
+import com.example.myproject.entity.MemberUser;
+import com.example.myproject.entity.Todo;
 import com.example.myproject.repository.AttractionRepository;
 import com.example.myproject.repository.ImgRepository;
 import com.example.myproject.repository.MemberUserRepository;
+import com.example.myproject.repository.TodoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -32,6 +36,7 @@ public class AttractionService {
     private final FAImageService faImageService;
     private final ImgRepository imgRepository;
     private final MemberUserRepository memberUserRepository;
+    private final TodoRepository todoRepository;
 
     public Long register(AttractionDTO attractionDTO, List<MultipartFile> multipartFiles) throws Exception{
         Attraction attraction = attractionDTO.createAtt();
@@ -82,6 +87,8 @@ public class AttractionService {
             faImgDTOList.add(faImgDTO);
         }
         Attraction attraction = attractionRepository.findById(ano).orElseThrow(EntityNotFoundException::new);
+        attraction.setViewCount(attraction.getViewCount() + 1);
+        attractionRepository.save(attraction);
         AttractionDTO attractionDTO = AttractionDTO.of(attraction);
         attractionDTO.setFaImgDTOList(faImgDTOList);
         return attractionDTO;

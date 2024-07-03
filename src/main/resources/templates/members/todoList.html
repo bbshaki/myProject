@@ -15,18 +15,19 @@
             <tr>
                 <th scope="col">Tno</th>
                 <th scope="col">title</th>
-                <th scope="col">Ano</th>
-                <th scope="col">Fno</th>
+                <th scope="col">delete</th>
+
             </tr>
             </thead>
             <tbody>
             <tr th:each="todo, status: ${todoList}">
-                <td th:value="${todo.fno}"></td>
+                <td th:text="${todo.tno}"></td>
                 <td>
                     <a href="#">[[${todo.title}]]</a>
                 </td>
-                <td th:text="${todo.ano}"></td>
-                <td th:text="${todo.fno}"></td>
+                <td>
+                    <button class="todoBtn">삭제</button>
+                </td>
             </tr>
             </tbody>
         </table>

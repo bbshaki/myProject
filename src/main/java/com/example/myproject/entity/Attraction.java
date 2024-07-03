@@ -45,6 +45,14 @@ public class Attraction extends BaseTimeEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<FAImage> faImgs = new ArrayList<>();
 
+    @OneToMany(mappedBy = "attraction", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<Todo> todos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "attraction" , cascade = CascadeType.ALL, orphanRemoval = true
+            , fetch = FetchType.LAZY)
+    private List<Reply> replies = new ArrayList<>();
+
     public void addFAimg(FAImage faImage) {
         faImgs.add(faImage);
         faImage.setAttraction(this);

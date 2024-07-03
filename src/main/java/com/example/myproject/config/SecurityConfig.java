@@ -35,6 +35,9 @@ public class SecurityConfig  {
                                 .requestMatchers("/festival/read").authenticated()
                                 .requestMatchers("/festival/modify").authenticated()
                                 .requestMatchers("/festival/delete").authenticated()
+                                .requestMatchers("/relies/new").authenticated()
+                                .requestMatchers("/relies/modify/**").authenticated()
+                                .requestMatchers("/relies/remove/**").authenticated()
                                 .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
                                 .requestMatchers("/**").permitAll()
 
