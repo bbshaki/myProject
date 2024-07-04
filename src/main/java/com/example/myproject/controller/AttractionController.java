@@ -2,6 +2,8 @@ package com.example.myproject.controller;
 
 import com.example.myproject.constant.Category;
 import com.example.myproject.dto.AttractionDTO;
+import com.example.myproject.dto.PageRequestDTO;
+import com.example.myproject.dto.PageResponseDTO;
 import com.example.myproject.entity.Attraction;
 import com.example.myproject.service.AttractionService;
 import jakarta.persistence.EntityNotFoundException;
@@ -70,11 +72,9 @@ public class AttractionController {
     }
 
     @GetMapping("/list")
-    public String attList(AttractionDTO attractionDTO, Model model){
-        List<AttractionDTO> attractionList = attractionService.selectAll();
-        log.info(attractionList);
-        model.addAttribute("atrc", attractionList);
-        return "attraction/list";
+    public void attList(PageRequestDTO pageRequestDTO, Model model){
+        PageResponseDTO<AttractionDTO> pageResponseDTO = attractionService.list(pageRequestDTO);
+        model.addAttribute("list", pageResponseDTO);
     }
 
     @GetMapping("/read")

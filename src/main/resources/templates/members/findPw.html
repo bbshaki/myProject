@@ -41,6 +41,7 @@
                             data: {email : email.val(), id : id.val()},
                             success: (data)=>{
                                 console.log(data);
+                                location.href="/members/login";
                             },
                             error: (error)=>{
                                 alert("전송에 실패했습니다")

@@ -113,10 +113,14 @@ public class MemberUserController {
 
     @PostMapping("/modify")
     public String memberModify(Principal principal, String password, String newPassword, Model model){
+        log.info(password);
+        log.info(newPassword);
         MemberUserDTO memberUserDTO = memberUserService.read(principal.getName());
         model.addAttribute("memberUserDTO", memberUserDTO);
+        log.info(memberUserDTO.getPassword());
         if (passwordEncoder.matches(password, memberUserDTO.getPassword())){
             memberUserService.newPassword(memberUserDTO, newPassword);
+            log.info(memberUserDTO.getPassword());
             model.addAttribute("msg", "변경이 완료되었습니다");
             return "redirect:/members/read";
         } else {
@@ -150,20 +154,20 @@ public class MemberUserController {
     public String test(HttpServletRequest request, String id, String email) throws IOException {
         UUID uuid = UUID.randomUUID();
         Random random = new Random();
-        String pw = uuid.toString() + random.nextInt(888888) + 111111;
+        String pw = uuid.toString() + (random.nextInt(888888) + 111111);
         log.info(pw);
         pw = pw.substring(0,pw.indexOf("-"));
         log.info(pw);
-        String title = "Woofly 아이디/비밀번호 찾기 인증 이메일 입니다.";
+        String title = "오늘 머 해? 사이트의 임시 비밀번호 입니다.";
         String from = "aaa@gmail.com";
         String to = email;
         String content =
                 System.getProperty("line.separator")+
                         System.getProperty("line.separator")+
-                        "안녕하세요 Woofly를 다시 찾아주셔서 감사합니다"
+                        "해당 임시 비밀번호로 로그인 후 반드시 비밀번호를 다시 변경해 주시기 바랍니다."
                         +System.getProperty("line.separator")+
                         System.getProperty("line.separator")+
-                        "인증번호는 " + pw + " 입니다. "
+                        "임시 비밀번호는 " + pw + " 입니다. "
                         +System.getProperty("line.separator");
 
         try {

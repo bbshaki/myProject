@@ -49,9 +49,11 @@ public class MemberUserService implements UserDetailsService {
     }
 
     public void newPassword(MemberUserDTO memberUserDTO, String newPassword){
+        log.info("여기에 들어오나?" + newPassword);
         memberUserDTO.setPassword(passwordEncoder.encode(newPassword));
         MemberUser memberUser = modelMapper.map(memberUserDTO, MemberUser.class);
         memberUser.setRole(Role.USER);
+        memberUserRepository.save(memberUser);
     }
 
     public void savePw(String id, String pw){

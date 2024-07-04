@@ -24,7 +24,9 @@
             <input type="text" id="name" class="form-control" th:value="${memberUserDTO.name}" readonly>
         </div>
         <br>
-        <button onclick="location.href='/members/modify'" class="btn btn-outline-info btn-sm modBtn">비밀번호 변경</button>
+            <a th:href="|@{/members/modify(mno=${memberUserDTO.mno})}|" class="btn btn-default mBtn">
+                비밀번호 변경
+            </a>
         <button type="button" class="btn btn-outline-info btn-sm removeBtn">회원 탈퇴</button>
         </form>
     </div>
