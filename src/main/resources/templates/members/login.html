@@ -21,41 +21,19 @@
                     <label for="id" class="form-label">ID</label>
                     <input id="id" type="id" class="form-control" name="id">
                 </div>
-
-                <!-- 비밀번호-->
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
-                    <input id="password" type="tel" class="form-control"  name="password"  placeholder="비밀번호를 입력해주세요">
+                    <input id="password" type="password" class="form-control"  name="password"  placeholder="비밀번호를 입력해주세요">
                 </div>
-
                 <p th:if="${loginErrorMsg}"  class="error" th:text="${loginErrorMsg}">
-
                 </p>
                 <div style="text-align: center">
-                    <button type="submit" class="btn btn-danger">로그인</button>
-                    <button type="button" class="btn btn-danger" onclick="location.href='/members/register'">회원가입</button>
+                    <button type="submit" class="btn btn-outline-warning btn-sm">로그인</button>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="location.href='/members/register'">회원가입</button>
+                    <button type="button" onclick="location.href='/members/findID'" class="btn btn-outline-info btn-sm modBtn">아이디 찾기</button>
+                    <button type="button" onclick="location.href='/members/findPw'" class="btn btn-outline-info btn-sm modBtn">비밀번호 찾기</button>
                 </div>
-
-
-
-
-
-
             </form>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         </div>
 </div>

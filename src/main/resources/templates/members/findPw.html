@@ -10,7 +10,51 @@
 <div class="container">
     <div layout:fragment="content" class="content">
         <h1>비밀 번호 찾기!</h1>
+        <form id="forms" role="form">
+            <div class="form-group">
+                <label for="id"><span class="glyphicon glyphicon-user"></span>ID</label>
+                <input type="text" required class="form-control" id="id" placeholder="아이디를 입력해 주세요">
+            </div>
+            <div class="form-group">
+                <label for="email"><span class="glyphicon glyphicon-eye-open"></span>E-mail</label>
+                <input type="email" required class="form-control" id="email" placeholder="이메일을 입력하세요.">
+            </div>
+            <button type="button" class="btn btn-success btn-block sendBtn" id="sendEmail">임시 비밀번호 전송</button>
+        </form>
     </div>
 </div>
+    <script layout:fragment="script" th:inline="javascript">
+        var sendBtn = $(".sendBtn")
+        var id = $("#id")
+        var email = $("#email")
+
+        sendBtn.on("click", function () {
+            console.log("홍길동")
+            $.ajax({
+                url:"/members/checkIdEmail",
+                data: {id : id.val(), email : email.val()},
+                success: function (data){
+                    console.log(data)
+                    if(data == 'true') {
+                        $.ajax({
+                            url:"/members/sendEmail",
+                            data: {email : email.val(), id : id.val()},
+                            success: (data)=>{
+                                console.log(data);
+                            },
+                            error: (error)=>{
+                                alert("전송에 실패했습니다")
+                            }
+                        })
+                    } else {
+                        alert("먼가 틀리게 적었을 수도???")
+                    }
+                },
+                error: (error)=> {
+                    console.log(error);
+                }
+            })
+        })
+    </script>
 </body>
 </html>

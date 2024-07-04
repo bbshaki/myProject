@@ -32,6 +32,12 @@
                 </p>
             </div>
             <div class="mb-3">
+                <label for="secPassword" class="form-label">비밀번호 확인</label>
+                <input type="text" class="form-control"  th:field="*{secPassword}" placeholder="위와 동일한 비밀번호를 입력해주세요">
+                <p th:if="${#fields.hasErrors('secPassword')}"    th:errors="*{secPassword}" class="fieldError" >
+                </p>
+            </div>
+            <div class="mb-3">
                 <label for="email" class="form-label">이메일주소</label>
                 <input type="email" class="form-control" th:field="*{email}" placeholder="name@example.com">
                 <p th:if="${#fields.hasErrors('email')}"    th:errors="*{email}" class="fieldError" >

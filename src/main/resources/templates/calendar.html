@@ -10,6 +10,46 @@
 <div class="container">
     <div layout:fragment="content" class="content">
         <h1>여기는 캘린더 페이지</h1>
+        <section class="calendar_wrap">
+            <div class="inner">
+                <h3>월별 축제 달력</h3>
+                <div class="month_btn">
+                    <span id="currentYearMonth">2024.7</span>
+                    <div class="arrowbtn">
+                        <button type="button" class="prev" onclick="fetchPrevMonth();">이전</button>
+                        <button type="button" class="next" onclick="fetchNextMonth();">다음</button>
+                    </div>
+                </div>
+                <div class="calendar">
+                    <table>
+                        <caption>
+                            문화관광축제 - 축제 캘린더
+                        </caption>
+                        <colgroup>
+                            <col style="width: calc(100% / 7)">
+                            <col style="width: calc(100% / 7)">
+                            <col style="width: calc(100% / 7)">
+                            <col style="width: calc(100% / 7)">
+                            <col style="width: calc(100% / 7)">
+                            <col style="width: calc(100% / 7)">
+                            <col style="width: calc(100% / 7)">
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th scope="col" class="holiday">일<span></span></th>
+                            <th scope="col">월<span></span></th>
+                            <th scope="col">화<span></span></th>
+                            <th scope="col">수<span></span></th>
+                            <th scope="col">목<span></span></th>
+                            <th scope="col">금<span></span></th>
+                            <th scope="col" class="saturday">토<span></span></th>
+                        </tr>
+                        </thead>
+                        <tbody id="calendar"><tr>  <td>&nbsp;</td>  <td class="calendar_day on" data-day="1">		<a href="javascript:;" title="선택됨">			<strong>1</strong>			<span><em>37개</em></span>		</a>  </td>  <td class="calendar_day" data-day="2">		<a href="javascript:;">			<strong>2</strong>			<span><em>37개</em></span>		</a>  </td>  <td class="calendar_day" data-day="3">		<a href="javascript:;">			<strong>3</strong>			<span><em>39개</em></span>		</a>  </td>  <td class="calendar_day" data-day="4">		<a href="javascript:;" title="">			<strong>4</strong>			<span><em>40개</em></span>		</a>  </td>  <td class="calendar_day" data-day="5">		<a href="javascript:;">			<strong>5</strong>			<span><em>41개</em></span>		</a>  </td>  <td class="saturday calendar_day" data-day="6">		<a href="javascript:;">			<strong>6</strong>			<span><em>44개</em></span>		</a>  </td></tr><tr>  <td class="holiday calendar_day" data-day="7">		<a href="javascript:;">			<strong>7</strong>			<span><em>43개</em></span>		</a>  </td>  <td class="calendar_day" data-day="8">		<a href="javascript:;">			<strong>8</strong>			<span><em>37개</em></span>		</a>  </td>  <td class="calendar_day" data-day="9">		<a href="javascript:;">			<strong>9</strong>			<span><em>37개</em></span>		</a>  </td>  <td class="calendar_day" data-day="10">		<a href="javascript:;">			<strong>10</strong>			<span><em>37개</em></span>		</a>  </td>  <td class="calendar_day" data-day="11">		<a href="javascript:;">			<strong>11</strong>			<span><em>37개</em></span>		</a>  </td>  <td class="calendar_day" data-day="12">		<a href="javascript:;">			<strong>12</strong>			<span><em>39개</em></span>		</a>  </td>  <td class="saturday calendar_day" data-day="13">		<a href="javascript:;">			<strong>13</strong>			<span><em>40개</em></span>		</a>  </td></tr><tr>  <td class="holiday calendar_day" data-day="14">		<a href="javascript:;">			<strong>14</strong>			<span><em>40개</em></span>		</a>  </td>  <td class="calendar_day" data-day="15">		<a href="javascript:;">			<strong>15</strong>			<span><em>35개</em></span>		</a>  </td>  <td class="calendar_day" data-day="16">		<a href="javascript:;">			<strong>16</strong>			<span><em>36개</em></span>		</a>  </td>  <td class="calendar_day" data-day="17">		<a href="javascript:;">			<strong>17</strong>			<span><em>36개</em></span>		</a>  </td>  <td class="calendar_day" data-day="18">		<a href="javascript:;">			<strong>18</strong>			<span><em>37개</em></span>		</a>  </td>  <td class="calendar_day" data-day="19">		<a href="javascript:;">			<strong>19</strong>			<span><em>45개</em></span>		</a>  </td>  <td class="saturday calendar_day" data-day="20">		<a href="javascript:;">			<strong>20</strong>			<span><em>48개</em></span>		</a>  </td></tr><tr>  <td class="holiday calendar_day" data-day="21">		<a href="javascript:;">			<strong>21</strong>			<span><em>44개</em></span>		</a>  </td>  <td class="calendar_day" data-day="22">		<a href="javascript:;">			<strong>22</strong>			<span><em>36개</em></span>		</a>  </td>  <td class="calendar_day" data-day="23">		<a href="javascript:;">			<strong>23</strong>			<span><em>36개</em></span>		</a>  </td>  <td class="calendar_day" data-day="24">		<a href="javascript:;">			<strong>24</strong>			<span><em>37개</em></span>		</a>  </td>  <td class="calendar_day" data-day="25">		<a href="javascript:;">			<strong>25</strong>			<span><em>39개</em></span>		</a>  </td>  <td class="calendar_day" data-day="26">		<a href="javascript:;">			<strong>26</strong>			<span><em>44개</em></span>		</a>  </td>  <td class="saturday calendar_day" data-day="27">		<a href="javascript:;">			<strong>27</strong>			<span><em>50개</em></span>		</a>  </td></tr><tr>  <td class="holiday calendar_day" data-day="28">		<a href="javascript:;">			<strong>28</strong>			<span><em>48개</em></span>		</a>  </td>  <td class="calendar_day" data-day="29">		<a href="javascript:;">			<strong>29</strong>			<span><em>42개</em></span>		</a>  </td>  <td class="calendar_day" data-day="30">		<a href="javascript:;">			<strong>30</strong>			<span><em>43개</em></span>		</a>  </td>  <td class="calendar_day" data-day="31">		<a href="javascript:;">			<strong>31</strong>			<span><em>45개</em></span>		</a>  </td>  <td>&nbsp;</td>  <td>&nbsp;</td>  <td>&nbsp;</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
     </div>
 </div>
 </body>

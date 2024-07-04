@@ -10,7 +10,43 @@
 <div class="container">
     <div layout:fragment="content" class="content">
         <h1>내 정보 수정!</h1>
+        <form action="/members/modify" method="post">
+            <div class="form-group has-success">
+                <label class="control-label" for="id">User ID</label>
+                <input type="text" id="id" class="form-control" th:value="${memberUserDTO.id}" readonly>
+            </div>
+            <div class="form-group has-warning">
+                <label class="control-label">기존 비밀번호</label>
+                <input type="password" class="form-control" name="password">
+            </div>
+            <div class="form-group has-warning">
+                <label class="control-label">새로운 비밀번호</label>
+                <input type="password" class="form-control" name="newPassword">
+            </div>
+            <div class="form-group has-error">
+                <label class="control-label" for="email">E-mail</label>
+                <input type="email" id="email" class="form-control" th:value="${memberUserDTO.email}" readonly>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-success btn-sm modBtn">저장</button>
+        </form>
     </div>
 </div>
+    <script layout:fragment="script" th:inline="javascript">
+        $(document).ready(function () {
+            var msg = [[${msg}]]
+            var errorMessage = [[${errorMessage}]]
+
+            $(".modBtn").on("click", function (){
+
+                if (msg != null) {
+                    alert(msg);
+                } else if (errorMessage != null){
+                    alert(errorMessage);
+                }
+                bindDomEvent();
+            })
+        })
+    </script>
 </body>
 </html>

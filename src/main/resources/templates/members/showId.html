@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+<head>
+    <meta charset="UTF-8">
+    <title>아이디 찾기</title>
+</head>
+<body>
+<div class="container">
+    <div layout:fragment="content" class="content">
+            <div class="form-group has-error">
+                <p th:text="'검색된 아이디는 : [' + ${id} + '] 입니다'"></p>
+            </div>
+            <button onclick="location.href='/members/login'" class="btn btn-outline-dark btn-sm">login</button>
+    </div>
+</div>
+</body>
+</html>

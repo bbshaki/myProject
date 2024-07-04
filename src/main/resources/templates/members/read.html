@@ -10,7 +10,34 @@
 <div class="container">
     <div layout:fragment="content" class="content">
         <h1>내 정보 보기!</h1>
+        <form id="forms">
+        <div class="form-group has-success">
+            <label class="control-label" for="id">mno</label>
+            <input type="hidden" id="mno" class="form-control" th:value="${memberUserDTO.mno}" readonly>
+        </div>
+        <div class="form-group has-success">
+            <label class="control-label" for="id">User ID</label>
+            <input type="text" id="id" class="form-control" th:value="${memberUserDTO.id}" readonly>
+        </div>
+        <div class="form-group has-success">
+            <label class="control-label" for="name">name</label>
+            <input type="text" id="name" class="form-control" th:value="${memberUserDTO.name}" readonly>
+        </div>
+        <br>
+        <button onclick="location.href='/members/modify'" class="btn btn-outline-info btn-sm modBtn">비밀번호 변경</button>
+        <button type="button" class="btn btn-outline-info btn-sm removeBtn">회원 탈퇴</button>
+        </form>
     </div>
+    <script layout:fragment="script" th:inline="javascript">
+        const formObj = document.querySelector("#forms")
+        document.querySelector(".removeBtn").addEventListener("click", function (e) {
+            e.preventDefault()
+            e.stopPropagation()
+            formObj.action = `/members/remove`;
+            formObj.method = "post";
+            formObj.submit();
+        })
+    </script>
 </div>
 </body>
 </html>
