@@ -32,4 +32,16 @@ public class TodoController {
         return result;
     }
 
+    @DeleteMapping("/delete/{tno}")
+    public Map<String, Long> deleteTodo(@PathVariable("tno") Long tno){
+        log.info("여기까지 들어오니????????????????????????????????");
+        todoService.deleteTodo(tno);
+        Map<String, Long> result = new HashMap<>();
+        result.put("tno", tno);
+
+        return result;
+    }
+
+
+
 }

@@ -19,23 +19,49 @@
 <div class="container">
     <div layout:fragment="content" class="content">
         <form action="/festival/write" method="post" enctype="multipart/form-data" th:object="${festivalDTO}">
-            <select class="form-select form-select-sm" aria-label="Small select example">
+            <select class="form-select form-select-sm" aria-label="Small select example" name="category">
                 <option>지역을 선택 하세요</option>
-                <th:block th:if="${not #lists.isEmpty(categotys)}"  th:each="cate: ${categotys}">
-                    <option th:text="${cate}"></option>
+                <th:block  th:each="cate: ${category}">
+                    <option th:value="${cate}" th:text="${cate.getKrName()}"></option>
+                </th:block>
+            </select>
+            <br>
+            <select class="form-select form-select-sm" aria-label="Small select example" name="progress">
+                <option>진행 상태를 선택 하세요</option>
+                <th:block  th:each="prog: ${progress}">
+                    <option th:value="${prog}" th:text="${prog.getKrName()}"></option>
                 </th:block>
             </select>
             <div>
                 <label for="title" class="form-label"></label>
-                <input class="form-control" th:field="*{title}" type="text" placeholder="제목을 입력해 주세요">
+                <input class="form-control" style="width: 100%; height: 2.25em; border: 2px solid plum; resize: none;" th:field="*{title}" type="text" placeholder="행사명을 입력해 주세요">
                 <p th:if="${#fields.hasErrors('title')}"    th:errors="*{title}" class="fieldError" >
                 </p>
             </div>
             <div>
                 <label for="content" class="form-label"></label>
-                <input class="form-control" th:field="*{content}" type="text" PLACEHOLDER="내용을 입력해 주세요">
+                <textarea class="form-control" style="width: 100%; height: 10.25em; border: 2px solid darkorchid; resize: none;"
+                          th:field="*{content}" type="text" PLACEHOLDER="행사 설명을 입력해 주세요"></textarea>
                 <p th:if="${#fields.hasErrors('content')}"    th:errors="*{content}" class="fieldError" >
                 </p>
+            </div>
+            <div class="form-inline form-group" >
+                <label for="scheduleS" class="control-label col-sm-2">시작일</label>
+                <div class="col-sm-10">
+                    <input id="scheduleS" class="form-control" style="width: 30%; border: 2px solid plum; resize: none;" th:field="*{scheduleS}" type="date" data-placeholder="시작일">
+                    <p th:if="${#fields.hasErrors('scheduleS')}"    th:errors="*{scheduleS}" class="fieldError" >
+                    </p>
+                </div>
+            </div>
+            <div class="form-inline form-group" >
+                <label for="scheduleS" class="control-label col-sm-2">종료일</label>
+                <div class="col-sm-10">
+                    <input id="scheduleF" class="form-control" style="width: 30%; border: 2px solid plum; resize: none;" th:field="*{scheduleF}" type="date" data-placeholder="종료일">
+                    <p th:if="${#fields.hasErrors('scheduleF')}"    th:errors="*{scheduleF}" class="fieldError" >
+                    </p>
+                </div>
+            </div>
+                <br>
                 <div th:if =  "${#lists.isEmpty(festivalDTO.faImgDTOList)}">
                     <div class="input-group mb-3" th:each="num: ${#numbers.sequence(1,5)}">
                         <input type="file" class="form-control cutom-file-input" name="fesImgFile">

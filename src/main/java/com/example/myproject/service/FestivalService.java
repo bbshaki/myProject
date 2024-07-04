@@ -1,7 +1,6 @@
 package com.example.myproject.service;
 
-import com.example.myproject.dto.FAImgDTO;
-import com.example.myproject.dto.FestivalDTO;
+import com.example.myproject.dto.*;
 import com.example.myproject.entity.Attraction;
 import com.example.myproject.entity.FAImage;
 import com.example.myproject.entity.Festival;
@@ -11,6 +10,9 @@ import com.example.myproject.repository.MemberUserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -29,6 +32,9 @@ public class FestivalService {
     private final FAImageService faImageService;
     private final ImgRepository imgRepository;
     private final MemberUserRepository memberUserRepository;
+    private final FesSearchService fesSearchService;
+    private final FesSearchCustom fesSearchCustom;
+    private final ModelMapper modelMapper;
 
     public Long register(FestivalDTO festivalDTO, List<MultipartFile> multipartFiles) throws Exception{
         Festival festival = festivalDTO.createFes();
@@ -61,6 +67,24 @@ public class FestivalService {
         return festivalDTOList;
     }
 
+    public PageResponseDTO<FestivalDTO> list(PageRequestDTO pageRequestDTO){
+        String[] types = pageRequestDTO.getTypes();
+        String keyword = pageRequestDTO.getKeyword();
+        Pageable pageable = pageRequestDTO.getPageable("fno");
+        Page<Festival> festivalPage = fesSearchService.searchAll(types, keyword, pageable);
+        List<FestivalDTO> festivalDTOList = festivalPage.getContent().stream()
+                .map(festival -> modelMapper.map(festival, FestivalDTO.class)).collect(Collectors.toList());
+        return PageResponseDTO.<FestivalDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(festivalDTOList)
+                .total((int) festivalPage.getTotalElements())
+                .build();
+    }
+
+    public Page<FestivalDTO> getPage(FestivalSearchDTO festivalSearchDTO, Pageable pageable){
+        return fesSearchCustom.getPage(festivalSearchDTO, pageable);
+    }
+
     public FestivalDTO getDtl(Long fno){
         List<FAImage> imgList = imgRepository.findImagesByFestivalFno(fno);
         List<FAImgDTO> faImgDTOList = new ArrayList<>();
@@ -86,7 +110,6 @@ public class FestivalService {
         List<Long> imgIds = festivalDTO.getImgIds();
 
         for (int i = 0; i < multipartFiles.size(); i++){
-            log.info("여기에 들어오시나요 여기는 fesservice 입니덩?");
             faImageService.updateImg(imgIds.get(i), multipartFiles.get(i));
         }
         return festival.getFno();

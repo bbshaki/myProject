@@ -9,7 +9,18 @@
 <body>
 <div class="container">
     <div layout:fragment="content" class="content">
-        <h1>아이디 찾기!</h1>
+        <form action="/members/findID" method="post">
+            <h2>ID 찾기</h2>
+            <div class="form-group has-error">
+                <label class="control-label" for="email">사용자 E-mail을 입력해주세요</label>
+                <input type="email" class="form-control" id="email" name="email">
+            </div>
+            <div class="form-group has-error">
+                <label class="control-label" for="name">사용자 이름을 입력해주세요</label>
+                <input type="text" class="form-control" id="name" name="name">
+            </div>
+            <button type="submit" class="btn btn-outline-dark btn-sm">ID 찾기</button>
+        </form>
     </div>
 </div>
 </body>

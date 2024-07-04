@@ -31,10 +31,10 @@ public class FestivalDTO {
 
     private Category category; // 지역 카테고리
 
-    @NotBlank(message = "제목은 필수 입니다!")
+    @NotBlank(message = "제목은 필수로 입력해 주세요")
     private String title;
 
-    @NotBlank(message = "내용은 필수 입니다!")
+    @NotBlank(message = "내용은 필수로 입력해 주세요")
     private String content;
 
     private LocalDate scheduleS;
@@ -50,7 +50,9 @@ public class FestivalDTO {
     private static ModelMapper modelMapper = new ModelMapper();
 
     public Festival createFes(){
-        return modelMapper.map(this, Festival.class);
+        Festival festival = modelMapper.map(this, Festival.class);
+
+        return festival;
     }
 
     public static FestivalDTO of(Festival festival){
@@ -60,5 +62,6 @@ public class FestivalDTO {
     private List<FAImgDTO> faImgDTOList = new ArrayList<>();
 
     private List<Long> imgIds = new ArrayList<>();
+
 
 }

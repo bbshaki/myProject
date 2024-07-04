@@ -25,10 +25,10 @@ public class AttractionDTO {
 
     private Category category;
 
-    @NotBlank(message = "제목은 필수 입니다!")
+    @NotBlank(message = "제목은 필수로 입력해 주세요")
     private String title;
 
-    @NotBlank(message = "내용은 필수 입니다!")
+    @NotBlank(message = "내용은 필수로 입력해 주세요")
     private String content;
 
     private int viewCount; // 조회수

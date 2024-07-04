@@ -27,6 +27,7 @@ public class SecurityConfig  {
         http
                 .authorizeHttpRequests(
                         (authorizeHttpRequests) -> authorizeHttpRequests
+                                .requestMatchers("/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/attraction/write").authenticated()
                                 .requestMatchers("/attraction/read").authenticated()
                                 .requestMatchers("/attraction/modify").authenticated()
@@ -91,59 +92,9 @@ public class SecurityConfig  {
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
-
-    //  스프링 시큐리티의 인증 처리 , 인증은 로그인
-    // AuthenticationManager는 사용자 인증시 앞에서 작성한 UserSecurityService 와 passwordEncoder를
-    //내부적으로 사용 인증과 권한 부여
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
-//
-//
-//    @Bean
-//    public ServletContextListener contextListener() {
-//        return new ServletContextListener() {
-//            @Override
-//            public void contextDestroyed(ServletContextEvent sce) {
-//                // 애플리케이션 종료 시 처리
-//                System.out.println("애플리케이션 종료됨!");
-//                // 모든 활성 세션 무효화
-//                ServletRequestAttributes sessionAttr = ((ServletRequestAttributes) RequestContextHolder .getRequestAttributes());
-//                System.out.println("객체 얻음");
-//
-//                HttpServletRequest request = sessionAttr.getRequest();
-//                System.out.println("request" + request);
-//                System.out.println("request" + request);
-//                System.out.println("request" + request);
-//                System.out.println("request" + request);
-//
-//                HttpSession httpSession = request.getSession();
-//
-//                System.out.println("httpSession" + httpSession);
-//                System.out.println("httpSession" + httpSession);
-//                System.out.println("httpSession" + httpSession);
-//                System.out.println("httpSession" + httpSession);
-//                if (httpSession != null) {
-//                    System.out.println("세션 초기화 !!");
-//                    System.out.println("세션 초기화 !!");
-//                    System.out.println("세션 초기화 !!");
-//                    System.out.println("세션 초기화 !!");
-//                    System.out.println("세션 초기화 !!");
-//                    httpSession.invalidate();
-//                }
-//
-//
-//            }
-//        };
-//    }
-
-//    @Bean
-//    public WebSecurityCustomizer webSecurityCustomizer() {
-//        return (web) -> web.ignoring().requestMatchers("/css/**", "/js/**", "/img/**");
-//    }
-
-
 
 }

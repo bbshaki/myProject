@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/layout1}"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      layout:decorate="~{layouts/layout1}">
 <head>
     <meta charset="UTF-8">
     <title>Attraction 글 상세 보기</title>
@@ -10,110 +9,103 @@
 <body>
 <div class="container">
     <div layout:fragment="content" class="content">
-        <h1 class="aa">맛집 나도 알려 줘!</h1>
-        <button class="todoBtn">
-            <i class="bi bi-bag-heart"></i>
+        <button class="todoBtn" style="background-color: white; border: none; text-align: center">
+            <i class="bi bi-chat-heart" style="font-size: 30px"></i> todo 등록
         </button>
-        <form id="form-mul" action="/attraction/modify" method="get" enctype="multipart/form-data">
-            <div>
-                <label for="ano">
-                    <input id="ano" name="ano" type="text" th:value="${attractionDTO.ano}" readonly>
-                </label>
-                <label for="title">
-                    <input id="title" name="title" type="text" th:value="${attractionDTO.title}" readonly>
-                </label>
-                <label for="content">
-                    <input id="content" name="content" type="text" th:value="${attractionDTO.content}" readonly>
-                </label>
-                <label for="writer">
-                    <input id="writer" name="writer" type="text" th:value="${attractionDTO.writer}" readonly>
-                </label>
+            <form id="form-mul" action="/attraction/modify" method="get" enctype="multipart/form-data">
                 <div>
                     <div class="row">
                         <div class="col">
-                                <div class="card-body" th:each="attImg: ${attractionDTO.faImgDTOList}">
-                                    <img width="500px" th:if="${not #strings.isEmpty(attImg.imgUrl)}" th:src="@{|/images/fa/@{${attImg.imgName}}|}" th:alt="${attImg.imgName}">
+                            <div class="card-body" th:each="fesImg: ${attractionDTO.faImgDTOList}">
+                                <img class="rounded mx-auto d-block" th:if="${not #strings.isEmpty(fesImg.imgUrl)}" th:src="@{|/images/fa/@{${fesImg.imgName}}|}" th:alt="${fesImg.imgName}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <p id="title" name="title">제목 - [[${attractionDTO.title}]]</p>
+                    <p id="content" name="content">내용 - [[${attractionDTO.content}]]</p>
+                    <p id="writer" name="writer">작성자 - [[${attractionDTO.writer}]]</p>
+                    <th:block th:if="${attractionDTO.writer} == ${#authentication.principal.username}">
+                        <button type="submit" class="btn btn-default">수정</button>
+                        <button type="button" class="btn btn-default removeBtn">삭제</button>
+                        <script>
+                            const aaa = document.querySelector("#form-mul");
+                            document.querySelector(".removeBtn").addEventListener("click", function (e){
+                                e.preventDefault()
+                                e.stopPropagation()
+                                aaa.action = "/attraction/delete";
+                                aaa.method = "post";
+                                aaa.submit();
+                            })
+                        </script>
+                    </th:block>
+                </div>
+            </form>
+        <section>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-comments fa-fw"></i> Reply
+                    <button type="button" class="btn btn-primary replyRegister" data-bs-toggle="modal" data-bs-target="#new-modal">
+                        New Reply</button>
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <ul class="chat replyList">
+                        <li class="clearfix"><div class="chat-body clearfix"><div class="header">
+                            <strong class="primary-font"></strong><small class="pull-right text-muted">
+                            <i class="fa fa-clock-o fa-fw"></i></small>
+                        </div><p></p></div></li>
+
+
+                    </ul>
+
+                    <div class="col-sm-6">
+                        <div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate">
+                            <ul class="pagination">
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="new-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <label class="comment1">내용</label>
+                                    <input class="form-control comment comment1" type="text">
+                                    <label class="regTime1">등록일자</label>
+                                    <input class="form-control regTime regTime1" type="hidden">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="closeBtn">Close</button>
+                                    <button type="button" class="btn btn-default modBtn" >Modify</button>
+                                    <button type="button" class="btn btn-default reBtn">Remove</button>
+                                    <button type="button" class="btn btn-default saveBtn">Save</button>
+
                                 </div>
                             </div>
+                            <!-- /.modal-content -->
                         </div>
+                        <!-- /.modal-dialog -->
                     </div>
-                <th:block th:if="${attractionDTO.writer} == ${#authentication.principal.username}">
-                    <button type="submit" class="btn btn-default">수정</button>
-                    <button type="button" class="btn btn-default removeBtn">삭제</button>
-                    <script>
-                        const aaa = document.querySelector("#form-mul");
-                        document.querySelector(".removeBtn").addEventListener("click", function (e){
-                            e.preventDefault()
-                            e.stopPropagation()
-                            aaa.action = "/attraction/delete";
-                            aaa.method = "post";
-                            aaa.submit();
-                        })
-                    </script>
-                </th:block>
-            </div>
-        </form>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <i class="fa fa-comments fa-fw"></i> Reply
-                <button type="button" class="btn btn-primary replyRegister" data-bs-toggle="modal" data-bs-target="#new-modal">
-                    New Reply</button>
-            </div>
-            <!-- /.panel-heading -->
-            <div class="panel-body">
-                <ul class="chat replyList">
-                    <li class="clearfix"><div class="chat-body clearfix"><div class="header">
-                        <strong class="primary-font"></strong><small class="pull-right text-muted">
-                        <i class="fa fa-clock-o fa-fw"></i></small>
-                    </div><p></p></div></li>
 
-
-                </ul>
-
-                <div class="col-sm-6">
-                    <div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate">
-                        <ul class="pagination">
-                        </ul>
-                    </div>
                 </div>
-
-                <div class="modal fade" id="new-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <label class="comment1">내용</label>
-                                <input class="form-control comment comment1" type="text">
-                                <label class="regTime1">등록일자</label>
-                                <input class="form-control regTime regTime1" type="hidden">
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="closeBtn">Close</button>
-                                <button type="button" class="btn btn-default modBtn" >Modify</button>
-                                <button type="button" class="btn btn-default reBtn">Remove</button>
-                                <button type="button" class="btn btn-default saveBtn">Save</button>
-
-                            </div>
-                        </div>
-                        <!-- /.modal-content -->
-                    </div>
-                    <!-- /.modal-dialog -->
-                </div>
-
             </div>
-        </div>
+        </section>
+
         <script src="/js/reply.js"></script>
     </div>
-
 </div>
     <script layout:fragment="script" th:inline="javascript">
 
+
         $(document).ready(function (){
             let todoBtn = $(".todoBtn")
-            let ano = [[${attractionDTO.ano}]]
+            let ano = [[${attraction.ano}]]
 
             todoBtn.on("click", function (){
                 let todoData = {"ano" : ano}
@@ -128,10 +120,9 @@
                     },
                     error : function (result, status, error) {
                         alert("중복 등록은 불가합니다!")
-                        }
+                    }
                 })
             })
-
             const result = [[${result}]]
             if (result) {
                 alert(result)
@@ -242,8 +233,8 @@
             let showList = function (page) {
                 str = "";
                 str2 = "";
-                let url = "/replies/lists/";
-                replyService.list(page, url, ano, function (data) {
+                let url = "/replies/list/";
+                replyService.list(page, url, fno, function (data) {
                     console.log(data)
                     thisPage = data.page;
                     if (data == null || data.dtoList == null || data.dtoList.length == null) {

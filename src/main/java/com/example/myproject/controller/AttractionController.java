@@ -1,13 +1,18 @@
 package com.example.myproject.controller;
 
 import com.example.myproject.constant.Category;
-import com.example.myproject.dto.AttractionDTO;
+import com.example.myproject.constant.Progress;
+import com.example.myproject.dto.*;
 import com.example.myproject.entity.Attraction;
+import com.example.myproject.entity.Festival;
 import com.example.myproject.service.AttractionService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -33,9 +39,11 @@ public class AttractionController {
 
         List<String> stringList = new ArrayList<>();
 
+
         for (Category a : Category.values()){
             stringList.add(a.getKrName());
         }
+
 
         model.addAttribute("categotys", stringList);
         return "/attraction/write";
@@ -69,12 +77,15 @@ public class AttractionController {
         return "redirect:/attraction/list";
     }
 
-    @GetMapping("/list")
-    public String attList(AttractionDTO attractionDTO, Model model){
-        List<AttractionDTO> attractionList = attractionService.selectAll();
-        log.info(attractionList);
-        model.addAttribute("atrc", attractionList);
-        return "attraction/list";
+    @GetMapping({"/list", "/list/{page}"})
+    public String attList(AttractionSearchDTO attractionSearchDTO,
+                          @PathVariable("page") Optional<Integer> page, Model model){
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0 , 10);
+        Page<AttractionDTO> attractions = attractionService.getPage(attractionSearchDTO, pageable);
+        model.addAttribute("attractions", attractions);
+        model.addAttribute("attractionSearchDTO", attractionSearchDTO);
+        model.addAttribute("maxPage", 5);
+        return "/attraction/list";
     }
 
     @GetMapping("/read")

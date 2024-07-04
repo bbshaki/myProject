@@ -3,41 +3,150 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout1}">
 <head>
+    <style>
+        .pagination > .page-item.active > .page-link {
+            background-color: plum;
+            border-color: white;
+        }
+        .pagination > .page-item > .page-link {
+            color: black;
+        }
+    </style>
     <meta charset="UTF-8">
     <title>Festival 글 목록</title>
 </head>
 <body>
 <div class="container">
     <div layout:fragment="content" class="content">
-        <a th:href="|@{/festival/write}|" class="btn btn-danger">
-            글쓰기
-        </a>
-        <h2></h2>
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">Fno</th>
-                <th scope="col">title</th>
-                <th scope="col">content</th>
-                <th scope="col">writer</th>
-                <th scope="col">regTime</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="fes, status: ${fstv}">
-                <td th:value="${fes.fno}"></td>
-                <!-- T(thymeleaf 에서 제공하는 객체에 접근하는 방법)-->
-                <!--T(com.shop.constant.ItemSellStatus).SELL-->
-                <td>
-                    <a th:href="|@{/festival/read(fno=${fes.fno})}|">[[${fes.title}]]</a>
-                </td>
-                <td th:text="${fes.content}"></td>
-                <td th:text="${fes.writer}"></td>
-                <td th:text="${#temporals.format(fes.regTime, 'yyyy-MM-dd hh:mm')}"></td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="row row-cols-1  g-4">
+            <div class="col">
+                <div class="card border-plum">
+                    <div class="card-body">
+                        <a class="btn btn-outline-dark" href="/festival/write" style="margin-left: 30px; margin-top: 10px; color: #ffeffc; background-color: #e4b6da; border: none">글쓰기</a>
+                        <form th:action="@{'/festival/list/' + ${festivals.number}}" method="get" th:object="${festivals}">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col" class="text-center fs-6" style="background-color: plum; color: darkmagenta">글번호</th>
+                                    <th scope="col" class="text-center fs-6" style="background-color: plum; color: darkmagenta">진행여부</th>
+                                    <th scope="col" class="text-center fs-6" style="background-color: plum; color: darkmagenta">지역</th>
+                                    <th scope="col" class="text-center fs-6" style="background-color: plum; color: darkmagenta">축제명</th>
+                                </tr>
+                                </thead>
+                                <br>
+                                <tbody>
+                                <tr th:each="festival, status: ${festivals.getContent()}">
+                                    <td th:text="${festival.fno}" class="text-center col-2" style="color: #4e007a"></td>
+                                    <th:block th:unless="${festival.progress == null}" th:each="prog: ${T(com.example.myproject.constant.Progress).values()}">
+                                        <td th:if="${prog.name().toString() == festival.progress.toString()}" th:text="${prog.krName}" class="text-center col-1" style="color: #4e007a"></td>
+                                    </th:block>
+                                    <th:block th:if="${festival.progress == null}">
+                                        <td></td>
+                                    </th:block>
+                                    <th:block th:unless="${festival.category == null}" th:each="ca: ${T(com.example.myproject.constant.Category).values()}">
+                                        <td th:if="${ca.name().toString() == festival.category.toString()}" th:text="${ca.krName}" class="text-center col-1" style="color: #4e007a"></td>
+                                    </th:block>
+                                    <th:block th:if="${festival.category == null}">
+                                        <td></td>
+                                    </th:block>
+                                    <td style="text-align: center">
+                                        <a th:href="|@{/festival/read(fno=${festival.fno})}|" style="text-decoration-line:none; color: #6e357a;" th:text="${festival.title}"></a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div class="row justify-content-center" th:with="start=${(festivals.number/maxPage) * maxPage + 1 } , end=${(festivals.totalPages==0 ) ? 1 :  (start + (maxPage -1) < festivals.totalPages ? start + (maxPage - 1): festivals.totalPages) }">
+                                <div class="col-4">
+                                    <ul class="pagination pagination-sm justify-content-center">
+                                        <li class="page-item" th:classappend="${festivals.first} ? 'disabled' : ''">
+                                            <a class="page-link"   th:onclick="'javascript:page(' + ${festivals.number - 1} + ')'  ">Prev</a>
+                                        </li>
+                                        <li class="page-item" th:each="page: ${#numbers.sequence(start,end)}"  th:classappend="${festivals.number eq page-1} ? 'active' : ''">
+                                            <a class="page-link" th:onclick="'javascript:page(' + ${page-1} + ')'  ">[[${page}]]</a>
+                                        </li>
+                                        <li class="page-item" th:classappend="${festivals.last} ? 'disabled' : ''">
+                                            <a class="page-link" th:onclick="'javascript:page(' + ${festivals.number + 1} + ')'  ">Next</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="input-group  align-self-center mb-3 form-control-sm" th:object="${festivalSearchDTO}">
+                                <select th:field="*{category}"
+                                        class="form-select form-select-sm mb-3" aria-label="Large select example">
+                                    <option value="">축제 지역</option>
+                                    <option value="SEOUL">서울</option>
+                                    <option value="GYEONGGI">경기</option>
+                                    <option value="GANGWON">강원</option>
+                                    <option value="CHUNGNAM">충남</option>
+                                    <option value="CHUNGBUK">충북</option>
+                                    <option value="GYEONGNAM">경남</option>
+                                    <option value="GYEONGBUK">경북</option>
+                                    <option value="JEONNAM">전남</option>
+                                    <option value="JEONBUK">전북</option>
+                                    <option value="JEJU">제주</option>
+                                    <option value="BUSAN">부산</option>
+                                    <option value="DAEGU">대구</option>
+                                    <option value="DAEJEON">대전</option>
+                                    <option value="INCHEON">인천</option>
+                                    <option value="GWANGJU">광주</option>
+                                    <option value="ULSAN">울산</option>
+                                    <option value="SEJONG">세종</option>
+                                </select>
+                                <select th:field="*{progress}"
+                                        class="form-select form-select-sm mb-3" aria-label="Large select example">
+                                    <option value="">진행 상태</option>
+                                    <option value="">전체</option>
+                                    <option value="EXPECT">예정</option>
+                                    <option value="PROCEED">진행중</option>
+                                    <option value="FINISH">종료</option>
+                                </select>
+                                <select th:field="*{searchBy}"
+                                        class="form-select form-select-sm mb-3" aria-label="Large select example">
+                                    <option value="title&content">행사명+내용</option>
+                                    <option value="title">행사명</option>
+                                    <option value="content">내용</option>
+                                </select>
+                                <div class="form-floating mb-3">
+                                    <input th:field="*{searchQuery}" type="text" class="form-control" id="floatingInput" placeholder="검색어를 입력해주세요">
+                                    <label for="floatingInput">검색어를 입력해주세요</label>
+                                </div>
+                                <!--검색 버튼-->
+                                <button type="button" class="mb-3 btn btn-light search">검색</button>
+                            </div>
+
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<script layout:fragment="script" th:inline="javascript">
+
+    $(document).ready(function () {
+        $(".search").on("click", function (e) {
+            e.preventDefault();
+            page(0)
+        })
+    })
+
+    function page(page) {
+
+        var category = $("#category").val()
+
+        var progress = $("#progress").val()
+
+        var  searchBy = $("#searchBy").val()
+
+        var searchQuery = $("#floatingInput").val()
+
+        location.href= "/festival/list/" + page +
+            "?category=" + category +
+            "&progress=" + progress +
+            "&searchBy=" + searchBy +
+            "&searchQuery=" + searchQuery
+    }
+</script>
 </body>
 </html>
