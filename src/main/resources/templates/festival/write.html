@@ -5,7 +5,82 @@
 <head>
     <meta charset="UTF-8">
     <title>Festival 글 쓰기</title>
-    <th:block layout:fragment="script">
+    <th:block layout:fragment="css">
+        <!--css-->
+        <style>
+            .fieldError {
+                color: red;
+            }
+        </style>
+    </th:block>
+
+</head>
+<body>
+<div class="container">
+    <div layout:fragment="content" class="content">
+        <form action="/festival/write" method="post" enctype="multipart/form-data" th:object="${festivalDTO}">
+            <select class="form-select form-select-sm" aria-label="Small select example" name="category">
+                <option>지역을 선택 하세요</option>
+                <th:block  th:each="cate: ${category}">
+                    <option th:value="${cate}" th:text="${cate.getKrName()}"></option>
+                </th:block>
+            </select>
+            <br>
+            <select class="form-select form-select-sm" aria-label="Small select example" name="progress">
+                <option>진행 상태를 선택 하세요</option>
+                <th:block  th:each="prog: ${progress}">
+                    <option th:value="${prog}" th:text="${prog.getKrName()}"></option>
+                </th:block>
+            </select>
+            <div>
+                <label for="title" class="form-label"></label>
+                <input class="form-control" style="width: 100%; height: 2.25em; border: 2px solid plum; resize: none;" th:field="*{title}" type="text" placeholder="행사명을 입력해 주세요">
+                <p th:if="${#fields.hasErrors('title')}"    th:errors="*{title}" class="fieldError" >
+                </p>
+            </div>
+            <div>
+                <label for="content" class="form-label"></label>
+                <textarea class="form-control" style="width: 100%; height: 10.25em; border: 2px solid darkorchid; resize: none;"
+                          th:field="*{content}" type="text" PLACEHOLDER="행사 설명을 입력해 주세요"></textarea>
+                <p th:if="${#fields.hasErrors('content')}"    th:errors="*{content}" class="fieldError" >
+                </p>
+            </div>
+            <div class="form-inline form-group" >
+                <label for="scheduleS" class="control-label col-sm-2">시작일</label>
+                <div class="col-sm-10">
+                    <input id="scheduleS" class="form-control" style="width: 30%; border: 2px solid plum; resize: none;" th:field="*{scheduleS}" type="date" data-placeholder="시작일">
+                    <p th:if="${#fields.hasErrors('scheduleS')}"    th:errors="*{scheduleS}" class="fieldError" >
+                    </p>
+                </div>
+            </div>
+            <div class="form-inline form-group" >
+                <label for="scheduleS" class="control-label col-sm-2">종료일</label>
+                <div class="col-sm-10">
+                    <input id="scheduleF" class="form-control" style="width: 30%; border: 2px solid plum; resize: none;" th:field="*{scheduleF}" type="date" data-placeholder="종료일">
+                    <p th:if="${#fields.hasErrors('scheduleF')}"    th:errors="*{scheduleF}" class="fieldError" >
+                    </p>
+                </div>
+            </div>
+                <br>
+                <div th:if =  "${#lists.isEmpty(festivalDTO.faImgDTOList)}">
+                    <div class="input-group mb-3" th:each="num: ${#numbers.sequence(1,5)}">
+                        <input type="file" class="form-control cutom-file-input" name="fesImgFile">
+                        <label class="input-group-text cutom-file-label" th:text="이미지 + ${num}">Upload</label>
+                    </div>
+                </div>
+                <div th:if =  "${not #lists.isEmpty(festivalDTO.faImgDTOList)}">
+                    <div class="input-group  mb-3" th:each="FAImgDTO, status: ${festivalDTO.faImgDTOList}">
+                        <input type="file"  class="form-control form-control-file" th:id="${status.index+1}" name="attImgFile" >
+                        <input type="text" class="form-control"  name="itemImgIds" th:value="${FAImgDTO.ino}">
+                        <label th:for="${status.index+1}" class="input-group-text form-control-label" th:text="${not #strings.isEmpty(FAImgDTO.originName)} ? ${FAImgDTO.originName} : '이미지'" >Upload</label>
+                    </div>
+                </div>
+            <button type="submit" class="btn btn-danger">전송</button>
+        </form>
+    </div>
+
+</div>
+<th:block layout:fragment="script">
 
     <script th:inline="javascript">
         $(document).ready(function () {
@@ -21,8 +96,8 @@
         function bindDomEvent() {
             $(".form-control-file").on("click", function () {
                 console.log($(this).val())
-                if($(this).val() == "" &&  $(this).siblings(".form-control-label").val()  == "상품이미지"){
-                    $(this).siblings(".form-control-label").html("상품이미지");
+                if($(this).val() == "" &&  $(this).siblings(".form-control-label").val()  == "이미지"){
+                    $(this).siblings(".form-control-label").html("이미지");
                 }
             })
 
@@ -56,31 +131,5 @@
 
 
 </th:block>
-</head>
-<body>
-<div class="container">
-    <div layout:fragment="content" class="content">
-        <h1>광고 절대 금지!</h1>
-        <form action="/festival/write" method="post" enctype="multipart/form-data">
-            <div>
-                <label for="title">
-                    <input id="title" name="title" type="text">
-                </label>
-                <label for="content">
-                    <input id="content" name="content" type="text">
-                </label>
-                <label for="writer">
-                    <input id="writer" name="writer" type="text" placeholder="나중에 principal 넣을 거임" readonly>
-                </label>
-            </div>
-                <div class="input-group mb-3" th:each="num: ${#numbers.sequence(1,5)}">
-                    <input type="file" class="form-control cutom-file-input" name="fesImgFile">
-                    <label class="input-group-text cutom-file-label" th:text="이미지 + ${num}">Upload</label>
-                </div>
-            <button type="submit">전송</button>
-        </form>
-    </div>
-
-</div>
 </body>
 </html>

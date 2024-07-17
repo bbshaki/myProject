@@ -1,21 +1,28 @@
 package com.example.myproject.controller;
 
-import com.example.myproject.dto.AttractionDTO;
-import com.example.myproject.dto.FestivalDTO;
+import com.example.myproject.constant.Category;
+import com.example.myproject.constant.Progress;
+import com.example.myproject.dto.*;
+import com.example.myproject.entity.Festival;
 import com.example.myproject.service.FestivalService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -26,36 +33,50 @@ public class FestivalController {
     private final FestivalService festivalService;
 
     @GetMapping("/write")
-    public String fesWrite(){
+    public String fesWrite(Model model){
+        model.addAttribute("festivalDTO", new FestivalDTO());
+        model.addAttribute("category", Category.values());
+        model.addAttribute("progress", Progress.values());
         return "festival/write";
     }
 
     @PostMapping("/write")
-    public String writeP(FestivalDTO festivalDTO, @RequestParam("fesImgFile")List<MultipartFile> fesImgFileList, Model model){
-        if (fesImgFileList.get(0).isEmpty() && festivalDTO.getFno() == null){
-            model.addAttribute("errorMsg", "첫번째 이미지는 팔수 입력 값입니다");
-        }
-        try {
-            festivalService.register(festivalDTO, fesImgFileList);
-        } catch (Exception e) {
-            model.addAttribute("errorMsg", "등록 중 에러가 발생했습니다.");
+    public String writeP(@Valid FestivalDTO festivalDTO, BindingResult bindingResult,
+                         @RequestParam("fesImgFile") List<MultipartFile> fesImgFileList,
+                         Model model, Principal principal){
+        if (bindingResult.hasErrors()){
             return "/festival/write";
         }
-        log.info(festivalDTO);
-        log.info(fesImgFileList);
+
+        if (fesImgFileList.get(0).isEmpty() && festivalDTO.getFno() == null){
+            model.addAttribute("errorMessage", "첫번째 이미지는 팔수 입력 값입니다");
+        }
+        try {
+            festivalDTO.setWriter(principal.getName());
+            festivalService.register(festivalDTO, fesImgFileList);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "등록 중 에러가 발생했습니다.");
+            return "/festival/write";
+        }
 
         return "redirect:/festival/list";
     }
 
-    @GetMapping("/list")
-    public String fesList(FestivalDTO festivalDTO, Model model){
-        List<FestivalDTO> festivalDTOList = festivalService.selectAll();
-        model.addAttribute("fstv", festivalDTOList);
-        return "festival/list";
+    @GetMapping({"/list", "/list/{page}"})
+    public String fesList(FestivalSearchDTO festivalSearchDTO,
+                          @PathVariable("page") Optional<Integer> page, Model model){
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0 , 10);
+        Page<FestivalDTO> festivals = festivalService.getPage(festivalSearchDTO, pageable);
+        model.addAttribute("festivals", festivals);
+        model.addAttribute("festivalSearchDTO", festivalSearchDTO);
+        model.addAttribute("maxPage", 5);
+        festivals.forEach(festival -> log.info(festival));
+        return "/festival/list";
     }
 
     @GetMapping("/read")
-    public String fesRead(Long fno, Model model){
+    public String fesRead(Long fno, Model model, Principal principal){
+        log.info(principal);
         try {
             FestivalDTO festivalDTO = festivalService.getDtl(fno);
             model.addAttribute("festivalDTO", festivalDTO);
@@ -67,8 +88,12 @@ public class FestivalController {
     }
 
     @GetMapping("/modify")
-    public String fesModify(Long fno, Model model){
-        model.addAttribute("festivalDTO", festivalService.getDtl(fno));
+    public String fesModify(Long fno, Model model, Principal principal){
+        FestivalDTO festivalDTO = festivalService.getDtl(fno);
+        if (!principal.getName().equals(festivalDTO.getWriter())){
+            return "redirect:/festival/read?fno=" + fno;
+        }
+        model.addAttribute("festivalDTO", festivalDTO);
         return "festival/modify";
     }
 

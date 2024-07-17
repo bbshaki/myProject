@@ -21,11 +21,11 @@ public class Reply extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rno;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // 댓글이 달릴 글 번호
+    @ManyToOne(fetch = FetchType.LAZY) // 댓글이 달릴 글 번호
     @JoinColumn(name = "fno")
     private Festival festival;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // 댓글이 달릴 글 번호
+    @ManyToOne(fetch = FetchType.LAZY) // 댓글이 달릴 글 번호
     @JoinColumn(name = "ano")
     private Attraction attraction;
 
@@ -34,5 +34,9 @@ public class Reply extends BaseTimeEntity {
 
     @Column(nullable = false)
     private String replier;
+
+    public void changeCom(String comment){
+        this.comment = comment;
+    }
 
 }

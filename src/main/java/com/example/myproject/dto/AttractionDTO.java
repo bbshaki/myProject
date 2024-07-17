@@ -3,6 +3,7 @@ package com.example.myproject.dto;
 import com.example.myproject.constant.Category;
 import com.example.myproject.entity.Attraction;
 import com.example.myproject.entity.MemberUser;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.modelmapper.ModelMapper;
 
@@ -24,8 +25,10 @@ public class AttractionDTO {
 
     private Category category;
 
+    @NotBlank(message = "제목은 필수로 입력해 주세요")
     private String title;
 
+    @NotBlank(message = "내용은 필수로 입력해 주세요")
     private String content;
 
     private int viewCount; // 조회수

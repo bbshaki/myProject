@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+<head>
+    <meta charset="UTF-8">
+    <title>test</title>
+</head>
+<body>
+    <div layout:fragment="content" class="content">
+        <div>
+            홍길동
+        </div>
+        <button class="btn">test</button>
+        <script>
+            $(".btn").on("click", function (){
+                $.ajax({
+                    url : "/members/test",
+                    success : function (data){
+                        console.log(data)
+                    }
+                })
+            })
+        </script>
+    </div>
+</body>
+</html>

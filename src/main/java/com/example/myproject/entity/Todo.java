@@ -1,19 +1,21 @@
 package com.example.myproject.entity;
 
-import com.example.myproject.entity.base.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.validator.constraints.UniqueElements;
 
 @Entity
-@Table(name = "todo")
 @Getter
 @Setter
-public class Todo extends BaseTimeEntity {
+@Table(name = "todo")
+@ToString
+public class Todo {
 
     @Id
-    @Column(name = "todo")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "tno")
     private Long tno;
 
     @ManyToOne
@@ -21,11 +23,11 @@ public class Todo extends BaseTimeEntity {
     private MemberUser memberUser;
 
     @ManyToOne
-    @JoinColumn(name = "fno")
+    @JoinColumn(name = "fno", unique = true)
     private Festival festival;
 
     @ManyToOne
-    @JoinColumn(name = "ano")
+    @JoinColumn(name = "ano", unique = true)
     private Attraction attraction;
 
 }
