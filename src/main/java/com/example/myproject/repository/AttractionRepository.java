@@ -9,7 +9,4 @@ import java.util.List;
 
 public interface AttractionRepository extends JpaRepository<Attraction, Long> {
 
-    @Query("update Attraction a set a.viewCount = a.viewCount + 1 where a.ano = :ano")
-    void updateCount(Long ano);
-
 }

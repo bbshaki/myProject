@@ -50,7 +50,9 @@ public class FestivalDTO {
     private static ModelMapper modelMapper = new ModelMapper();
 
     public Festival createFes(){
-        return modelMapper.map(this, Festival.class);
+        Festival festival = modelMapper.map(this, Festival.class);
+
+        return festival;
     }
 
     public static FestivalDTO of(Festival festival){
@@ -60,5 +62,6 @@ public class FestivalDTO {
     private List<FAImgDTO> faImgDTOList = new ArrayList<>();
 
     private List<Long> imgIds = new ArrayList<>();
+
 
 }

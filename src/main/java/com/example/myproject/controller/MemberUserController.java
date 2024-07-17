@@ -63,11 +63,6 @@ public class MemberUserController {
         return "redirect:/";
     }
 
-    @GetMapping("/list")
-    public String memberList(){
-        return "members/list";
-    }
-
     @GetMapping("/login")
     public String login(){
 
@@ -104,11 +99,9 @@ public class MemberUserController {
     }
 
     @GetMapping("/todoList")
-    public String todoList(Model model, Principal principal){
+    public void todoList(Model model, Principal principal){
         List<TodoDTO> tododtoList = todoService.todoDTOList(principal);
         model.addAttribute("todoList", tododtoList);
-        tododtoList.forEach(a -> log.info(a));
-        return "members/todoList";
     }
 
     @PostMapping("/modify")
@@ -158,7 +151,7 @@ public class MemberUserController {
         log.info(pw);
         pw = pw.substring(0,pw.indexOf("-"));
         log.info(pw);
-        String title = "오늘 머 해? 사이트의 임시 비밀번호 입니다.";
+        String title = "오늘 뭐 해? 사이트의 임시 비밀번호 입니다.";
         String from = "aaa@gmail.com";
         String to = email;
         String content =
@@ -188,10 +181,10 @@ public class MemberUserController {
         return "전송";
     }
 
-    @PostMapping("/remove")
-    public String removeMember(Long mno){
+    @GetMapping("/remove")
+    public String removeMember(@RequestParam("mno") Long mno){
         memberUserService.memberRemove(mno);
-        return "redirect:/";
+        return "redirect:/members/logout";
     }
 
     }

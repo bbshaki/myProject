@@ -1,5 +1,6 @@
 package com.example.myproject.service;
 
+import com.example.myproject.dto.AttractionSearchDTO;
 import com.example.myproject.entity.Attraction;
 import com.example.myproject.entity.QAttraction;
 import com.querydsl.core.BooleanBuilder;
@@ -11,7 +12,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -22,24 +25,41 @@ public class AttSearchService extends QuerydslRepositorySupport {
         super(Attraction.class);
     }
 
-    public Page<Attraction> searchAtt(Pageable pageable){
+    public Page<Attraction> jpqlQuerygetPage(AttractionSearchDTO attractionSearchDTO, Pageable pageable) {
+
         QAttraction attraction = QAttraction.attraction;
         JPQLQuery<Attraction> query = from(attraction);
 
-        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        BooleanBuilder booleanBuilder =new BooleanBuilder();
+        LocalDateTime localDateTime = LocalDateTime.now();
 
-        booleanBuilder.or(attraction.title.contains("1"));
-        booleanBuilder.or(attraction.content.contains("1"));
-        booleanBuilder.or(attraction.category.stringValue().contains("1"));
+        if(attractionSearchDTO.getCategory() != null){
+            booleanBuilder.and(attraction.category.eq(attractionSearchDTO.getCategory()));
+        }
+
+        if(StringUtils.equals("all", attractionSearchDTO.getSearchDate())  || attractionSearchDTO.getSearchDate() == null){
+
+        }
+
+        if(StringUtils.equals("title", attractionSearchDTO.getSearchBy())){
+            booleanBuilder.and(attraction.title.like("%" +attractionSearchDTO.getSearchQuery()+ "%"));
+
+        }else if(StringUtils.equals("content",  attractionSearchDTO.getSearchBy()) ){
+
+            booleanBuilder.and(attraction.content.like("%" +attractionSearchDTO.getSearchQuery()+ "%"));
+
+        }
 
         query.where(booleanBuilder);
+
         query.where(attraction.ano.gt(0L));
+
         this.getQuerydsl().applyPagination(pageable, query);
 
-        List<Attraction> list = query.fetch();
-        Long count = query.fetchCount();
+        List<Attraction> content = query.fetch();
+        long count = query.fetchCount();
 
-        return null;
+        return new PageImpl<>(content, pageable, count);
     }
 
     public Page<Attraction> searchAll(String[] types, String keyword, Pageable pageable) {
@@ -62,7 +82,7 @@ public class AttSearchService extends QuerydslRepositorySupport {
                         booleanBuilder.or(attraction.content.contains(keyword));
                         break;
                     case "ca":
-                        booleanBuilder.or(attraction.category.stringValue().contains(keyword));
+                    booleanBuilder.or(attraction.category.stringValue().contains(keyword));
                         break;
                 }
 
@@ -74,11 +94,11 @@ public class AttSearchService extends QuerydslRepositorySupport {
 
         this.getQuerydsl().applyPagination(pageable, query);
 
-        List<Attraction> boardList = query.fetch();
+        List<Attraction> attractionList = query.fetch();
 
         long count = query.fetchCount();
 
-        return new PageImpl<>(boardList, pageable, count);
+        return new PageImpl<>(attractionList, pageable, count);
     }
 
 

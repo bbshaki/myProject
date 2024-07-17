@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+<head>
+    <style>
+        .pagination > .page-item.active > .page-link {
+            background-color: plum;
+            border-color: white;
+        }
+        .pagination > .page-item > .page-link {
+            color: black;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <title>회원 목록</title>
+</head>
+<body>
+<div class="container">
+    <div layout:fragment="content" class="content">
+        <div class="row row-cols-1  g-4">
+            <div class="col">
+                <div class="col-sm-6">
+                    <div id="dataTables-example_filter" class="dataTables_filter">
+                        <form action="/admin/memberList" method="get">
+                            <input type="hidden" name="size" th:value="${pageRequestDTO.size}">
+                            <select name="type" aria-controls="dataTables-example" class="form-control input-sm">
+                                <option value="">회원 검색</option>
+                                <option value="i" th:selected="${pageRequestDTO.type == 'i'}">ID</option>
+                                <option value="n" th:selected="${pageRequestDTO.type == 'n'}">이름</option>
+                                <option value="e" th:selected="${pageRequestDTO.type == 'e'}">이메일</option>
+                            </select>
+
+                            <label>
+                                <input type="search" name="keyword" th:value="${pageRequestDTO.keyword}" class="form-control input-sm" placeholder="" aria-controls="dataTables-example">
+                            </label>
+                            <button type="submit" class="btn btn-defaulf searchBtn">검색</button>
+                            <button type="button" class="btn btn-defaulf clearBtn">Clear</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table width="100%" class="table table-striped table-bordered table-hover dataTable no-footer dtr-inline" id="dataTables-example1" role="grid" aria-describedby="dataTables-example_info" style="width: 100%;">
+                            <thead>
+                            <tr role="row">
+                                <th class="sorting" tabindex="0" aria-controls="dataTables-examplee" rowspan="1" colspan="1" aria-label="Rendering engine: activate to sort column ascending" style="width: 162.667px;">회원번호</th>
+                                <th class="sortingg" tabindex="0" aria-controls="dataTables-example" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending" style="width: 197.667px;">id</th>
+                                <th class="sorting_ascg" tabindex="0" aria-controls="dataTables-example" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column descending" style="width: 181.667px;" aria-sort="ascending">name</th>
+                                <th class="sortingg" tabindex="0" aria-controls="dataTables-example" rowspan="1" colspan="1" aria-label="Engine version: activate to sort column ascending" style="width: 140.667px;">email</th>
+                            </tr>
+                            </thead>
+                            <tbody th:with="link = ${pageRequestDTO.getLink()}">
+                            <tr class="gradeU odd" role="row" th:each="dto: ${pageResponseDTO.dtoList}">
+                                <td class="">[[${dto.mno}]]</td>
+                                <td class="">[[${dto.id}]]</td>
+                                <td class="sorting_1">[[${dto.name}]]</td>
+                                <td class="center">[[${dto.email}]]</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate">
+                            <ul class="pagination">
+                                <li th:if="${pageResponseDTO.prev}" class="paginate_button previous" aria-controls="dataTables-example" tabindex="0" id="dataTables-example_previous">
+                                    <a th:data-num="${pageResponseDTO.start -1}">Previous</a>
+                                </li>
+                                <!--thymeleaf에는 순서를 표기하는 #numbers.sequence가 있다-->
+                                <th:block th:each="i: ${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
+                                    <li th:class="${pageResponseDTO.page == i} ? 'paginate_button active' : 'paginate_button' " aria-controls="dataTables-example" tabindex="0">
+                                        <a th:data-num="${i}">[[${i}]]</a>
+                                    </li>
+                                </th:block>
+
+                                <li th:if="${list.next}" class="paginate_button next" aria-controls="dataTables-example" tabindex="0" id="dataTables-example_next">
+                                    <a th:data-num="${list.end +1}">Next</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script layout:fragment="script" th:inline="javascript">
+
+    document.querySelector(".clearBtn").addEventListener("click", function (e){
+        console.log("홍길동")
+        e.preventDefault();
+        e.stopPropagation();
+
+        self.location = '/admin/memberList';
+    });
+
+    document.querySelector(".pagination").addEventListener("click", function (e){
+        e.preventDefault();
+        e.stopPropagation();
+        let target = e.target;
+
+        if(target.tagName !== 'A'){
+            return;
+        }
+
+        let num = target.getAttribute("data-num");
+        let formObj = document.querySelector("form");
+
+        formObj.innerHTML += `<input type="hidden" name="page" value="${num}">`;
+        formObj.submit();
+    });
+
+
+</script>
+</body>
+</html>

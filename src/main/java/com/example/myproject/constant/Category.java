@@ -16,6 +16,7 @@ public enum Category {
     }
 
 
+
     public String getKrName(){
         return KrName;
     }

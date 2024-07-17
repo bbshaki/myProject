@@ -36,57 +36,10 @@ class FestivalRepositoryTest {
 
     @Test
     @Transactional
-    public void toTest(){
-        Attraction attraction = new Attraction();
-        attraction.setTitle("타이틀이다");
-        attraction.setContent("콘텐츠다");
-        attraction.setCategory(Category.DAEGU);
-        attraction.setMemberUser(memberUserRepository.findById(1L).get());
-
-        Reply reply = new Reply();
-        reply.setAttraction(attractionRepository.save(attraction));
-        reply.setMemberUser(memberUserRepository.findById(1L).get());
-        reply.setComment("댓글 내용이다");
-
-        replyRepository.save(reply);
-        log.info(reply);
-
-        reply.setComment("수정이다아아아아아아");
-        attraction.setContent("이것도 수정이다!");
-        log.info(replyRepository.findById(reply.getRno()));
-        log.info(attractionRepository.findById(attraction.getAno()));
-
-
-
-    }
-
-    @Test
-    public void create(){
-        MemberUser memberUser = new MemberUser();
-        memberUser.setEmail("a@a.com");
-        memberUser.setId("idid");
-        memberUser.setName("홍길동");
-        memberUser.setRole(Role.USER);
-        memberUser.setPassword("12341234");
-        memberUser.setPhoneNumber("000000000");
-
-        memberUser = memberUserRepository.findById(1L).get();
-
-        Festival festival = Festival.builder()
-                .category(Category.BUSAN)
-                .title("타이틀이다")
-                .content("콘텐츠 텍스트")
-                .progress(Progress.EXPECT)
-                .scheduleS(LocalDate.now())
-                .scheduleF(LocalDate.now().plusDays(3))
-                .memberUser(memberUser)
-                .build();
-
-        log.info(festivalRepository.save(festival));
-
-        festival.setTitle("수정");
-        festivalRepository.findById(festival.getFno());
-        log.info(festival);
+    public void count(){
+        LocalDate date = LocalDate.now();
+        Long count = festivalRepository.countFestivalByScheduleS(date);
+        log.info(count);
     }
 
     @Test

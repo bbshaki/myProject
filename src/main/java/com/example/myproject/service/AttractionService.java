@@ -1,10 +1,7 @@
 package com.example.myproject.service;
 
 import com.example.myproject.dto.*;
-import com.example.myproject.entity.Attraction;
-import com.example.myproject.entity.FAImage;
-import com.example.myproject.entity.MemberUser;
-import com.example.myproject.entity.Todo;
+import com.example.myproject.entity.*;
 import com.example.myproject.repository.AttractionRepository;
 import com.example.myproject.repository.ImgRepository;
 import com.example.myproject.repository.MemberUserRepository;
@@ -36,8 +33,8 @@ public class AttractionService {
     private final FAImageService faImageService;
     private final ImgRepository imgRepository;
     private final MemberUserRepository memberUserRepository;
-    private final TodoRepository todoRepository;
     private final AttSearchService attSearchService;
+    private final AttSearchCustom attSearchCustom;
     private final ModelMapper modelMapper;
 
     public Long register(AttractionDTO attractionDTO, List<MultipartFile> multipartFiles) throws Exception{
@@ -70,6 +67,10 @@ public class AttractionService {
         }
 
         return attractionDTOList;
+    }
+
+    public Page<AttractionDTO> getPage(AttractionSearchDTO attractionSearchDTO, Pageable pageable){
+        return attSearchCustom.getPage(attractionSearchDTO, pageable);
     }
 
     public PageResponseDTO<AttractionDTO> list(PageRequestDTO pageRequestDTO){

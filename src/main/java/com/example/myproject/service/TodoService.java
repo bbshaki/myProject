@@ -55,9 +55,7 @@ public class TodoService {
 
     public List<TodoDTO> todoDTOList(Principal principal){
         MemberUser memberUser = memberUserRepository.findMemberUserById(principal.getName());
-        log.info(memberUser);
         List<Todo> todoList = todoRepository.findByMemberUser(memberUser);
-        log.info(todoList);
         List<TodoDTO> todoDTOList = new ArrayList<>();
         for (Todo todo : todoList){
             TodoDTO todoDTO = new TodoDTO();
@@ -74,6 +72,11 @@ public class TodoService {
         }
         todoDTOList.forEach(todoDTO -> log.info("값이 머라고 나오나~~~~~" + todoDTOList));
         return todoDTOList;
+    }
+
+    public void deleteTodo(Long tno){
+        log.info("그러면 여기는 수행하니????????????????????????");
+        todoRepository.deleteById(tno);
     }
 
 }

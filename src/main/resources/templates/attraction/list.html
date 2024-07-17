@@ -3,157 +3,134 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout1}">
 <head>
+    <style>
+        .pagination > .page-item.active > .page-link {
+            background-color: plum;
+            border-color: white;
+        }
+        .pagination > .page-item > .page-link {
+            color: black;
+        }
+    </style>
     <meta charset="UTF-8">
     <title>Attraction 글 목록</title>
 </head>
 <body>
 <div class="container">
     <div layout:fragment="content" class="content">
-
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        게시판 <a class="btn btn-default" href="/attraction/write">글쓰기</a>
-                    </div>
-                    <div class="panel-body">
-                        <div id="dataTables-example_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="dataTables_length" id="dataTables-example_length">
-
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div id="dataTables-example_filter" class="dataTables_filter">
-                                        <form action="/attraction/list" method="get">
-                                            <input type="hidden" name="size" th:value="${pageRequestDTO.size}">
-                                            <select name="type" aria-controls="dataTables-example" class="form-control input-sm">
-                                                <option value="">------------</option>
-                                                <option value="t" th:selected="${pageRequestDTO.type == 't'}">제목</option>
-                                                <option value="c" th:selected="${pageRequestDTO.type == 'c'}">내용</option>
-                                                <option value="w" th:selected="${pageRequestDTO.type == 'ca'}">카테고리</option>
-                                                <option value="tc" th:selected="${pageRequestDTO.type == 'tc'}">제목+내용</option>
-                                                <option value="tcw" th:selected="${pageRequestDTO.type == 'tcca'}">전체</option>
-                                            </select>
-
-                                            <label>
-                                                <input type="search" name="keyword" th:value="${pageRequestDTO.keyword}" class="form-control input-sm" placeholder="" aria-controls="dataTables-example">
-                                            </label>
-                                            <button type="submit" class="btn btn-defaulf searchBtn">검색</button>
-                                            <button type="button" class="btn btn-defaulf clearBtn">Clear</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <table width="100%" class="table table-striped table-bordered table-hover dataTable no-footer dtr-inline" id="dataTables-example1" role="grid" aria-describedby="dataTables-example_info" style="width: 100%;">
-                                        <thead>
-                                        <tr role="row">
-                                            <th class="sorting" tabindex="0" aria-controls="dataTables-examplee" rowspan="1" colspan="1" aria-label="Rendering engine: activate to sort column ascending" style="width: 162.667px;">ano</th>
-                                            <th class="sortingg" tabindex="0" aria-controls="dataTables-example" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending" style="width: 197.667px;">title</th>
-                                            <th class="sorting_ascg" tabindex="0" aria-controls="dataTables-example" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column descending" style="width: 181.667px;" aria-sort="ascending">writer</th>
-                                            <th class="sortingg" tabindex="0" aria-controls="dataTables-example" rowspan="1" colspan="1" aria-label="Engine version: activate to sort column ascending" style="width: 140.667px;">regTime</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody th:with="link = ${pageRequestDTO.getLink()}">
-                                        <tr class="gradeU odd" role="row" th:each="dto: ${list.dtoList}">
-                                            <td class="">[[${dto.ano}]]</td>
-                                            <td class="">
-                                                <a th:href="|@{/attraction/read(ano=${dto.ano})}&${link}|">[[${dto.title}]]</a>
-                                            </td>
-                                            <td class="sorting_1">[[${dto.writer}]]</td>
-                                            <td class="center">[[${#temporals.format(dto.regTime, 'yyyy-MM-dd')}]]</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
+        <div class="row row-cols-1  g-4">
+            <div class="col">
+                <div class="card border-plum">
+                    <div class="card-body">
+                        <a class="btn btn-outline-dark" href="/attraction/write" style="margin-left: 30px; margin-top: 10px; color: #ffeffc; background-color: #e4b6da; border: none">글쓰기</a>
+                        <form th:action="@{'/attraction/list/' + ${attractions.number}}" method="get" th:object="${attractions}">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col" class="text-center" style="background-color: plum">글번호</th>
+                                    <th scope="col" class="text-center" style="background-color: plum">지역</th>
+                                    <th scope="col" class="text-center" style="background-color: plum">제목</th>
+                                    <th scope="col" class="text-center" style="background-color: plum">작성자</th>
+                                </tr>
+                                </thead>
+                                <br>
+                                <tbody>
+                                <tr th:each="attraction, status: ${attractions.getContent()}">
+                                    <td th:text="${attraction.ano}" class="text-center col-2"></td>
+                                    <th:block th:unless="${attraction.category == null}" th:each="ca: ${T(com.example.myproject.constant.Category).values()}">
+                                        <td th:if="${ca.name().toString() == attraction.category.toString()}" th:text="${ca.krName}" class="text-center col-1"></td>
+                                    </th:block>
+                                    <th:block th:if="${attraction.category == null}">
+                                        <td></td>
+                                    </th:block>
+                                    <td style="text-align: center" class="col-8">
+                                        <a th:href="|@{/attraction/read(ano=${attraction.ano})}|" style="text-decoration-line:none; color: darkorchid;" th:text="${attraction.title}"></a>
+                                    </td>
+                                    <td th:text="${attraction.writer}" class="text-center col-1"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div class="row justify-content-center" th:with="start=${(attractions.number/maxPage) * maxPage + 1 } , end=${(attractions.totalPages==0 ) ? 1 :  (start + (maxPage -1) < attractions.totalPages ? start + (maxPage - 1): attractions.totalPages) }">
+                                <div class="col-4">
+                                    <ul class="pagination pagination-sm justify-content-center">
+                                        <li class="page-item" th:classappend="${attractions.first} ? 'disabled' : ''">
+                                            <a class="page-link"   th:onclick="'javascript:page(' + ${attractions.number - 1} + ')'  ">Prev</a>
+                                        </li>
+                                        <li class="page-item" th:each="page: ${#numbers.sequence(start,end)}"  th:classappend="${attractions.number eq page-1} ? 'active' : ''">
+                                            <a class="page-link" th:onclick="'javascript:page(' + ${page-1} + ')'  ">[[${page}]]</a>
+                                        </li>
+                                        <li class="page-item" th:classappend="${attractions.last} ? 'disabled' : ''">
+                                            <a class="page-link" th:onclick="'javascript:page(' + ${attractions.number + 1} + ')'  ">Next</a>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
-
-                            <div class="row">
-
-                                <div class="col-sm-6">
-                                    <div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate">
-                                        <ul class="pagination">
-                                            <li th:if="${list.prev}" class="paginate_button previous" aria-controls="dataTables-example" tabindex="0" id="dataTables-example_previous">
-                                                <a th:data-num="${list.start -1}">Previous</a>
-                                            </li>
-                                            <!--thymeleaf에는 순서를 표기하는 #numbers.sequence가 있다-->
-                                            <th:block th:each="i: ${#numbers.sequence(list.start, list.end)}">
-                                                <li th:class="${list.page == i} ? 'paginate_button active' : 'paginate_button' " aria-controls="dataTables-example" tabindex="0">
-                                                    <a th:data-num="${i}">[[${i}]]</a>
-                                                </li>
-                                            </th:block>
-
-                                            <li th:if="${list.next}" class="paginate_button next" aria-controls="dataTables-example" tabindex="0" id="dataTables-example_next">
-                                                <a th:data-num="${list.end +1}">Next</a>
-                                            </li>
-                                        </ul>
-                                    </div>
+                            <div class="input-group  align-self-center mb-3 form-control-sm" th:object="${attractionSearchDTO}">
+                                <select th:field="*{category}"
+                                        class="form-select form-select-sm mb-3" aria-label="Large select example">
+                                    <option value="">지역을 선택 하세요</option>
+                                    <option value="SEOUL">서울</option>
+                                    <option value="GYEONGGI">경기</option>
+                                    <option value="GANGWON">강원</option>
+                                    <option value="CHUNGNAM">충남</option>
+                                    <option value="CHUNGBUK">충북</option>
+                                    <option value="GYEONGNAM">경남</option>
+                                    <option value="GYEONGBUK">경북</option>
+                                    <option value="JEONNAM">전남</option>
+                                    <option value="JEONBUK">전북</option>
+                                    <option value="JEJU">제주</option>
+                                    <option value="BUSAN">부산</option>
+                                    <option value="DAEGU">대구</option>
+                                    <option value="DAEJEON">대전</option>
+                                    <option value="INCHEON">인천</option>
+                                    <option value="GWANGJU">광주</option>
+                                    <option value="ULSAN">울산</option>
+                                    <option value="SEJONG">세종</option>
+                                </select>
+                                <select th:field="*{searchBy}"
+                                        class="form-select form-select-sm mb-3" aria-label="Large select example">
+                                    <option value="">전체</option>
+                                    <option value="title">제목</option>
+                                    <option value="content">내용</option>
+                                </select>
+                                <div class="form-floating mb-3">
+                                    <input th:field="*{searchQuery}" type="text" class="form-control" id="floatingInput" placeholder="검색어를 입력해주세요">
+                                    <label for="floatingInput">검색어를 입력해주세요</label>
                                 </div>
+                                <!--검색 버튼-->
+                                <button type="button" class="mb-3 btn btn-light search">검색</button>
                             </div>
-                        </div>
 
+
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-<!--        <table class="table">-->
-<!--            <thead>-->
-<!--            <tr>-->
-<!--                <th scope="col" class="">글 번호</th>-->
-<!--                <th scope="col" class="">제목</th>-->
-<!--                <th scope="col" class="text-center">작성자</th>-->
-<!--                <th scope="col" class="text-center">작성일</th>-->
-<!--                <th scope="col" class="text-center">조회수</th>-->
-<!--            </tr>-->
-<!--            </thead>-->
-<!--            <tbody>-->
-<!--            <tr th:each="att, status: ${atrc}">-->
-<!--                <td th:text="${att.ano}" class=""></td>-->
-<!--                &lt;!&ndash; T(thymeleaf 에서 제공하는 객체에 접근하는 방법)&ndash;&gt;-->
-<!--                &lt;!&ndash;T(com.shop.constant.ItemSellStatus).SELL&ndash;&gt;-->
-<!--                <td>-->
-<!--                    <a th:href="|@{/attraction/read(ano=${att.ano})}|" class="text-center">[[${att.title}]]</a>-->
-<!--                </td>-->
-<!--                <td th:text="${att.writer}" class="text-center"></td>-->
-<!--                <td th:text="${#temporals.format(att.regTime, 'yyyy-MM-dd hh:mm')}" class="text-center"></td>-->
-<!--                <td th:text="${att.viewCount}" class="text-center"></td>-->
-<!--            </tr>-->
-<!--            </tbody>-->
-<!--        </table>-->
     </div>
 </div>
 <script layout:fragment="script" th:inline="javascript">
 
-    const result = [[${result}]];
-    if(result){
-        alert(result+" 번 글이 등록되었습니다")
+    $(document).ready(function () {
+        $(".search").on("click", function (e) {
+            e.preventDefault();
+            page(0)
+        })
+    })
+
+    function page(page) {
+
+        var category = $("#category").val()
+
+        var  searchBy = $("#searchBy").val()
+
+        var searchQuery = $("#floatingInput").val()
+
+        location.href= "/attraction/list/" + page +
+            "?category=" + category +
+            "&searchBy=" + searchBy +
+            "&searchQuery=" + searchQuery
     }
-
-    document.querySelector(".pagination").addEventListener("click", function (e){
-        e.preventDefault();
-        e.stopPropagation();
-        let target = e.target;
-
-        if(target.tagName !== 'A'){
-            return;
-        }
-
-        let num = target.getAttribute("data-num");
-        let formObj = document.querySelector("form");
-
-        formObj.innerHTML += `<input type="hidden" name="page" value="${num}">`;
-        formObj.submit();
-    });
-
-    document.querySelector(".ClearBtn").addEventListener("click", function (e){
-        e.preventDefault();
-        e.stopPropagation();
-
-        self.location = '/attraction/list';
-    });
 </script>
 </body>
 </html>

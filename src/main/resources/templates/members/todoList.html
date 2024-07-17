@@ -9,7 +9,7 @@
 <body>
 <div class="container">
     <div layout:fragment="content" class="content">
-        <h1>~~~~My Todo~~~~</h1>
+        <h3>내 찜꽁 목록</h3>
         <table class="table">
             <thead>
             <tr>
@@ -21,10 +21,18 @@
             </thead>
             <tbody>
             <tr th:each="todo, status: ${todoList}">
-                <td th:text="${todo.tno}"></td>
-                <td>
-                    <a href="#">[[${todo.title}]]</a>
-                </td>
+                <td class="tno" th:value="${todo.tno}">[[${todo.tno}]]</td>
+                <th:block th:unless="${todo.ano == null}">
+                    <td>
+                        <a th:href="|@{/attraction/read(ano=${todo.ano})}|" style="text-decoration-line:none; color: darkorchid;">[[${todo.title}]]</a>
+                    </td>
+                </th:block>
+                <th:block th:unless="${todo.fno == null}">
+                    <td>
+                        <a th:href="|@{/festival/read(fno=${todo.fno})}|" style="text-decoration-line:none; color: darkorchid;">[[${todo.title}]]</a>
+                    </td>
+                </th:block>
+
                 <td>
                     <button class="todoBtn">삭제</button>
                 </td>
@@ -34,4 +42,26 @@
     </div>
 </div>
 </body>
+<script layout:fragment="script" th:inline="javascript">
+
+
+    $(document).ready(function () {
+        let todoBtn = $(".todoBtn")
+        todoBtn.on("click", function () {
+            let tno = $(this).closest('tr').find('.tno').text();
+            $.ajax({
+                url: "/todo/delete/" + tno,
+                type: "delete",
+                contentType : "application/json; charset=UTF-8",
+                success: function (result) {
+                    alert("todo 삭제가 완료되었습니다!");
+                    location.href="/members/todoList"
+                },
+                error: function () {
+                    alert("삭제 실패")
+                }
+            })
+        })
+    })
+</script>
 </html>

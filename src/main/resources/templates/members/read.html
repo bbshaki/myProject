@@ -9,37 +9,53 @@
 <body>
 <div class="container">
     <div layout:fragment="content" class="content">
-        <h1>내 정보 보기!</h1>
-        <form id="forms">
-        <div class="form-group has-success">
-            <label class="control-label" for="id">mno</label>
-            <input type="hidden" id="mno" class="form-control" th:value="${memberUserDTO.mno}" readonly>
-        </div>
-        <div class="form-group has-success">
-            <label class="control-label" for="id">User ID</label>
-            <input type="text" id="id" class="form-control" th:value="${memberUserDTO.id}" readonly>
-        </div>
-        <div class="form-group has-success">
-            <label class="control-label" for="name">name</label>
-            <input type="text" id="name" class="form-control" th:value="${memberUserDTO.name}" readonly>
-        </div>
-        <br>
-            <a th:href="|@{/members/modify(mno=${memberUserDTO.mno})}|" class="btn btn-default mBtn">
-                비밀번호 변경
-            </a>
-        <button type="button" class="btn btn-outline-info btn-sm removeBtn">회원 탈퇴</button>
-        </form>
+        <table border=1 width="100%" height="100%">
+            <tr>
+                <td width="20%" bgcolor="#add8e6">
+                    <div>
+                        <a th:href="|@{/members/todoList}|" style="text-decoration-line:none; color: #6e357a; text-align: center">| My Todo 가기</a>
+                        <br>
+                        <br>
+                        <br>
+                        <a th:href="|@{/members/modify(mno=${memberUserDTO.mno})}|" style="text-decoration-line:none; color: #6e357a">
+                            | 비밀번호 변경
+                        </a>
+                        <br>
+                        <br>
+                        <br>
+                        <a th:href="|@{/members/remove(mno=${memberUserDTO.mno})}|" style="text-decoration-line:none; color: #6e357a">
+                            | 회원 탈퇴
+                        </a>
+                    </div>
+                </td>
+                <td>
+                    <form id="forms">
+                        <div class="form-group has-success right">
+                            <label class="control-label" for="id">mno</label>
+                            <input type="hidden" id="mno" class="form-control" th:value="${memberUserDTO.mno}" readonly>
+                        </div>
+                        <div class="form-group has-success">
+                            <label class="control-label" for="id">User ID</label>
+                            <input type="text" id="id" class="form-control" th:value="${memberUserDTO.id}" readonly>
+                        </div>
+                        <div class="form-group has-success">
+                            <label class="control-label" for="name">name</label>
+                            <input type="text" id="name" class="form-control" th:value="${memberUserDTO.name}" readonly>
+                        </div>
+                        <div class="form-group has-success">
+                            <label class="control-label" for="email">email</label>
+                            <input type="text" id="email" class="form-control" th:value="${memberUserDTO.email}" readonly>
+                        </div>
+                        <div class="form-group has-success">
+                            <label class="control-label" for="phoneNumber">phoneNumber</label>
+                            <input type="text" id="phoneNumber" class="form-control" th:value="${memberUserDTO.phoneNumber}" readonly>
+                        </div>
+                        <br>
+                    </form>
+                </td>
+            </tr>
+        </table>
     </div>
-    <script layout:fragment="script" th:inline="javascript">
-        const formObj = document.querySelector("#forms")
-        document.querySelector(".removeBtn").addEventListener("click", function (e) {
-            e.preventDefault()
-            e.stopPropagation()
-            formObj.action = `/members/remove`;
-            formObj.method = "post";
-            formObj.submit();
-        })
-    </script>
 </div>
 </body>
 </html>
