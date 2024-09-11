@@ -6,8 +6,8 @@
 	<meta charset="UTF-8">
 	<title>calendar</title>
 	<link th:href="@{/css/calendar.css}" rel="stylesheet">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,
-	FILL,GRAD@20..48,100..700,0..1,-50..200" />
+	<link rel="stylesheet"
+		  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
 </head>
 <body>
 <div class="container">
@@ -30,113 +30,143 @@
 					<li>Fri</li>
 					<li>Sat</li>
 				</ul>
-				<ul class="days">
-				</ul>
+				<ul class="days"></ul>
 			</div>
+		</div>
+		<!-- 행사를 표시할 영역 추가 -->
+		<div id="eventList" class="event-list" style="margin-top: 20px;">
+			<h5>행사 리스트</h5>
+			<ul id="events"></ul>
 		</div>
 	</div>
 </div>
 <script layout:fragment="script" th:inline="javascript">
-		let festivalDays = {};
-		let currentDate = document.querySelector('.current-date'),
-		 	daysTag = document.querySelector('.days'),
+	let festivalDays = {};
+	let currentDate = document.querySelector('.current-date'),
+			daysTag = document.querySelector('.days'),
 			prevNextIcon = document.querySelectorAll('.icons button');
-		let date = new Date();
-		let currYear = date.getFullYear(),
-				currMonth = date.getMonth();
-		let festivals = "";
-		const months = [
-			'January',
-			'February',
-			'March',
-			'April',
-			'May',
-			'June',
-			'July',
-			'August',
-			'September',
-			'October',
-			'November',
-			'December',
-		];
+	let date = new Date();
+	let currYear = date.getFullYear(),
+			currMonth = date.getMonth();
+	let festivals = "";
+	const months = [
+		'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
+		'September', 'October', 'November', 'December',
+	];
 
-		$.ajax({
-			url : "/calendar/aaa",
-			dataType : "json",
-			success : function (result) {
-				festivals = "";
-				festivals = result
-				renderCalendar(festivals);
-			},
-			error : function (data){
-				alert(data)
-			}
-		})
-		const renderCalendar = (festivals) => {
-			let firstDayOfMonth = new Date(currYear, currMonth, 1).getDay(),
-			lastDateOfMonth = new Date(currYear, currMonth + 1, 0).getDate(),
-			lastDayOfMonth = new Date(currYear, currMonth, lastDateOfMonth).getDay(),
-			lastDateOfLastMonth = new Date(currYear, currMonth, 0).getDate();
-			let liTag = "";
-			festivalDays = {};
-			festivals.forEach(festival => {
-				let start = new Date(festival.scheduleS);
-				let end = new Date(festival.scheduleF);
+	// AJAX 요청으로 축제 데이터 가져오기
+	$.ajax({
+		url: "/calendar/aaa",
+		type: "GET",
+		dataType: "json",
+		success: function (result) {
+			console.log("축제 데이터 로드 성공:", result); // 콘솔에 데이터를 출력하여 구조를 확인
+			festivals = result;
+			renderCalendar(festivals);
+		},
+		error: function (xhr, status, error) {
+			console.error("데이터 로드 오류:", error); // 에러 발생 시 콘솔에 출력
+			alert("축제 데이터를 불러오지 못했습니다. 관리자에게 문의하세요.");
+		}
+	});
 
+	const renderCalendar = (festivals) => {
+		let firstDayOfMonth = new Date(currYear, currMonth, 1).getDay(),
+				lastDateOfMonth = new Date(currYear, currMonth + 1, 0).getDate(),
+				lastDayOfMonth = new Date(currYear, currMonth, lastDateOfMonth).getDay(),
+				lastDateOfLastMonth = new Date(currYear, currMonth, 0).getDate();
+		let liTag = "";
+		festivalDays = {};
+
+		// 데이터 구조 확인 및 로그 추가
+		festivals.forEach(festival => {
+			console.log("축제 데이터 항목:", festival); // 각 축제 항목의 구조를 확인
+
+			// 날짜 값이 제대로 존재하는지 확인
+			let start = festival.scheduleS ? new Date(festival.scheduleS) : null;
+			let end = festival.scheduleF ? new Date(festival.scheduleF) : null;
+
+			// 날짜가 존재하는 경우만 처리
+			if (start && end) {
 				while (start <= end) {
 					const key = `${start.getFullYear()}-${start.getMonth() + 1}-${start.getDate()}`;
-					festivalDays[key] = (festivalDays[key] || 0) + 1;
+					festivalDays[key] = festivalDays[key] || [];
+					festivalDays[key].push(festival);
 					start.setDate(start.getDate() + 1);
 				}
-			});
-				for (let i = firstDayOfMonth; i > 0; i--){
-					liTag += `<li class="inactive">${lastDateOfLastMonth - i + 1}</li>`;
-				}
-				for (let i = 1; i <= lastDateOfMonth; i++){
-					let today = i === date.getDate() && currMonth === new Date().getMonth()
-					&& currYear === new Date().getFullYear() ? "active" : "";
-					let key = `${currYear}-${currMonth + 1}-${i}`;
-					let festivalCount = festivalDays[key] || 0; // 현재 날짜의 축제 수 계산
-					liTag += `<li class="${today}">${i}${festivalCount > 0 ? ` (${festivalCount})` : ''}</li>`;
+			} else {
+				console.warn("유효하지 않은 축제 날짜:", festival);
+			}
+		});
 
-				}
-				for (let i = lastDayOfMonth; i < 6; i++){
-					liTag += `<li class="inactive">${i - lastDayOfMonth + 1}</li>`;
-				}
-			currentDate.innerHTML = `${months[currMonth]} ${currYear}`;
-			daysTag.innerHTML = liTag;
+		for (let i = firstDayOfMonth; i > 0; i--) {
+			liTag += `<li class="inactive">${lastDateOfLastMonth - i + 1}</li>`;
 		}
+		for (let i = 1; i <= lastDateOfMonth; i++) {
+			let today = i === date.getDate() && currMonth === new Date().getMonth()
+			&& currYear === new Date().getFullYear() ? "active" : "";
+			let key = `${currYear}-${currMonth + 1}-${i}`;
+			let festivalCount = festivalDays[key] ? festivalDays[key].length : 0;
+			liTag += `<li class="${today}" data-date="${key}">${i}${festivalCount > 0 ? ` (${festivalCount})` : ''}</li>`;
+		}
+		for (let i = lastDayOfMonth; i < 6; i++) {
+			liTag += `<li class="inactive">${i - lastDayOfMonth + 1}</li>`;
+		}
+		currentDate.innerHTML = `${months[currMonth]} ${currYear}`;
+		daysTag.innerHTML = liTag;
 
-		prevNextIcon.forEach(icon => {
-			icon.addEventListener("click", () => {
-				currMonth = icon.id === "prev" ? currMonth - 1 : currMonth + 1;
-				if (currMonth < 0 || currMonth > 11){
-					date = new Date(currYear, currMonth);
-					currYear = date.getFullYear();
-					currMonth = date.getMonth();
-				} else {
-					date = new Date();
+		// 날짜 클릭 이벤트 추가
+		document.querySelectorAll('.days li').forEach(day => {
+			day.addEventListener('click', function () {
+				if (!this.classList.contains('inactive')) {
+					showEvents(this.getAttribute('data-date'));
 				}
-				$.ajax({
-					url : "/calendar/aaa",
-					dataType : "json",
-					success : function (result) {
-						festivals = "";
-						console.log(result)
-						festivals = result
-						console.log(festivals)
-						renderCalendar(festivals);
-					},
-					error : function (data){
-						alert(data)
-					}
-				})
-			})
-		})
+			});
+		});
+	}
 
+	// 날짜 클릭 시 해당 날짜의 행사 리스트를 표시
+	const showEvents = (dateKey) => {
+		let eventsContainer = document.getElementById('events');
+		eventsContainer.innerHTML = ''; // 기존 리스트 초기화
+		if (festivalDays[dateKey]) {
+			festivalDays[dateKey].forEach(event => {
+				let eventItem = document.createElement('li');
+				eventItem.textContent = `${event.category || "행사 지역 없음"} - ${event.title || "행사명 없음"}`;
+				eventsContainer.appendChild(eventItem);
+			});
+		} else {
+			eventsContainer.innerHTML = '<li>해당 날짜에 행사가 없습니다.</li>';
+		}
+	}
 
-
-
+	prevNextIcon.forEach(icon => {
+		icon.addEventListener("click", () => {
+			currMonth = icon.id === "prev" ? currMonth - 1 : currMonth + 1;
+			if (currMonth < 0 || currMonth > 11) {
+				date = new Date(currYear, currMonth);
+				currYear = date.getFullYear();
+				currMonth = date.getMonth();
+			} else {
+				date = new Date();
+			}
+			// AJAX 재요청으로 새로운 달의 축제 데이터 가져오기
+			$.ajax({
+				url: "/calendar/aaa",
+				type: "GET",
+				dataType: "json",
+				success: function (result) {
+					console.log("축제 데이터 로드 성공:", result);
+					festivals = result;
+					renderCalendar(festivals);
+				},
+				error: function (xhr, status, error) {
+					console.error("데이터 로드 오류:", error);
+					alert("축제 데이터를 불러오지 못했습니다. 관리자에게 문의하세요.");
+				}
+			});
+		});
+	});
 </script>
 </body>
 </html>

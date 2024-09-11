@@ -24,15 +24,21 @@ public class CalendarController {
     private final FestivalService festivalService;
 
     @GetMapping("/calendar")
-    public String calender(Model model) {
-        List<FestivalDTO> festivalDTOList = festivalService.selectAll();
+    public String calendar(Model model) {
+        List<FestivalDTO> festivalDTOList = getFestivalList();
         model.addAttribute("festivalDTO", festivalDTOList);
         return "calendar";
     }
 
+    // 축제 데이터를 JSON으로 반환하는 메서드
     @GetMapping("/calendar/aaa")
-    public @ResponseBody ResponseEntity calender() {
-        List<FestivalDTO> festivalDTOList = festivalService.selectAll();
-        return new ResponseEntity<List<FestivalDTO>>(festivalDTOList, HttpStatus.OK);
+    public @ResponseBody ResponseEntity<List<FestivalDTO>> getCalendarData() {
+        List<FestivalDTO> festivalDTOList = getFestivalList();
+        return ResponseEntity.ok(festivalDTOList);
+    }
+
+    // 중복된 서비스 호출을 메서드로 추출하여 재사용
+    private List<FestivalDTO> getFestivalList() {
+        return festivalService.selectAll();
     }
 }
