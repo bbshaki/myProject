@@ -10,13 +10,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import java.io.IOException;
 
 @Log4j2
-public class CustomAuthenticationEntryPoint implements
-        AuthenticationEntryPoint {
-    //http request header에
-    //XMLHttpRequest라는 값이 세팅되어 요청이 옴
-    // 인증되지 ㅇ낳ㅇ느 사용자가 ajax로 리소스를 요청할 경우
-    //Unauthorized 에러 발생
-
+public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         log.info(request.getHeader("x-requested-with"));

@@ -14,4 +14,19 @@ public class MainController {
     public String main(){
         return "main";
     }
+
+    @GetMapping("/test/abc")
+    public void test(){
+
+    }
+
+    @GetMapping("/test/aaa")
+    public void test1(){
+
+    }
+
+    @GetMapping("/test/bbb")
+    public void test2(){
+
+    }
 }
